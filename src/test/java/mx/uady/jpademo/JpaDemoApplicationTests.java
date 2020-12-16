@@ -1,4 +1,4 @@
-package mx.uady.sicei;
+package mx.uady.appbusqueda;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
