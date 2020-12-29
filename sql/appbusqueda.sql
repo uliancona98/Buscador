@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-12-2020 a las 18:08:00
+-- Tiempo de generación: 29-12-2020 a las 15:12:40
 -- Versión del servidor: 10.4.14-MariaDB
 -- Versión de PHP: 7.3.23
 
@@ -64,6 +64,17 @@ CREATE TABLE `libros` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `tokens`
+--
+
+CREATE TABLE `tokens` (
+  `id` int(11) NOT NULL,
+  `token` varchar(1000) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `usuarios`
 --
 
@@ -98,6 +109,13 @@ ALTER TABLE `libros`
 ALTER TABLE `libros` ADD FULLTEXT KEY `contenido` (`contenido`);
 
 --
+-- Indices de la tabla `tokens`
+--
+ALTER TABLE `tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `token` (`token`);
+
+--
 -- Indices de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
@@ -123,6 +141,12 @@ ALTER TABLE `autoreslibros`
 -- AUTO_INCREMENT de la tabla `libros`
 --
 ALTER TABLE `libros`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `tokens`
+--
+ALTER TABLE `tokens`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
