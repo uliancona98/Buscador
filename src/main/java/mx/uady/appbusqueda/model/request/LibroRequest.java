@@ -3,6 +3,7 @@ package mx.uady.appbusqueda.model.request;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 
 public class LibroRequest{
     
@@ -29,10 +30,6 @@ public class LibroRequest{
 
     public LibroRequest(){
         
-    }
-
-    public LibroRequest(String nombre) {
-        this.nombre = nombre;
     }
 
     public String getUsuario() {
@@ -97,21 +94,10 @@ public class LibroRequest{
         this.isbn = isbn;
     }
 
-    public Libro id(Integer id) {
-        this.id = id;
-        return this;
-    }
-
-    public Libro titulo(String titulo) {
-        this.titulo = titulo;
-        return this;
-    }
-
-
     @Override
     public String toString() {
         return "{" +
-            " nombre='" + getNombre() + "'" +
+            " titulo='" + getTitulo() + "'" +
             "}";
     }
     

@@ -16,11 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
-import mx.uady.appbusqueda.model.Alumno;
-import mx.uady.appbusqueda.model.Profesor;
 import mx.uady.appbusqueda.model.Usuario;
-import mx.uady.appbusqueda.repository.AlumnoRepository;
-import mx.uady.appbusqueda.repository.ProfesorRepository;
 import mx.uady.appbusqueda.repository.UsuarioRepository;
 import org.springframework.http.HttpStatus;
 
@@ -37,28 +33,21 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 
 import mx.uady.appbusqueda.exception.NotFoundException;
-
-import mx.uady.appbusqueda.model.Licenciatura;
-
-import mx.uady.appbusqueda.service.AlumnoSerivce;
-import mx.uady.appbusqueda.service.UsuarioService;
-import mx.uady.appbusqueda.service.LoginService;
-
 import mx.uady.appbusqueda.repository.UsuarioRepository;
 
 import mx.uady.appbusqueda.config.JwtTokenUtil;
 
 import mx.uady.appbusqueda.model.request.LoginRequest;
-import mx.uady.appbusqueda.model.request.AlumnoRequest;
+import mx.uady.appbusqueda.model.request.UsuarioRequest;
 import mx.uady.appbusqueda.model.JwtResponse;
+import mx.uady.appbusqueda.service.UsuarioService;
+import mx.uady.appbusqueda.service.LoginService;
 
 
 @RestController
 @RequestMapping("/api")
 public class LoginRest {
 
-    @Autowired
-    private AlumnoSerivce alumnoService;
     @Autowired
     private UsuarioService usuarioService;
     @Autowired
@@ -100,16 +89,16 @@ public class LoginRest {
 
     @PostMapping("/register")
     //crea un usuario con un nuevo token
-    public ResponseEntity register(@RequestBody @Valid AlumnoRequest request) throws URISyntaxException{
+    public ResponseEntity register(@RequestBody @Valid UsuarioRequest request) throws URISyntaxException{
         
-        Alumno alumno = alumnoService.crearAlumno(request);
+        Usuario usuario = usuarioService.crearUsuario(request);
 
-        if(alumno != null) {
+        if(usuario != null) {
             return ResponseEntity
-            .created(new URI("/alumnos/" + alumno.getId()))
-            .body(alumno);
+            .created(new URI("/usuario/" + usuario.getId()))
+            .body(usuario);
         } else {
-             return ResponseEntity.status(HttpStatus.CONFLICT).body(alumno);
+             return ResponseEntity.status(HttpStatus.CONFLICT).body(usuario);
         }
     }
 }

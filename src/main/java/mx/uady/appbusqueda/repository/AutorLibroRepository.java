@@ -10,6 +10,8 @@ import mx.uady.appbusqueda.model.AutorLibro;
 
 @Repository
 public interface AutorLibroRepository extends JpaRepository<AutorLibro, Integer> {
-    List<Tutoria> findByIdAutor(Integer idAutor);
-    List<Tutoria> findByIdLibro(Integer idLibro);
+    List<AutorLibro> findByIdAutor(Integer idAutor);
+    List<AutorLibro> findByIdLibro(Integer idLibro);
+    List<AutorLibro> findByIdLibroAndIdAutor(Integer idLibro, Integer idAutor);
+
 }

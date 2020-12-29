@@ -21,67 +21,65 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import mx.uady.appbusqueda.exception.NotFoundException;
-import mx.uady.appbusqueda.model.Alumno;
-import mx.uady.appbusqueda.model.Licenciatura;
-import mx.uady.appbusqueda.model.request.AlumnoRequest;
-import mx.uady.appbusqueda.service.AlumnoSerivce;
+import mx.uady.appbusqueda.model.Autor;
+import mx.uady.appbusqueda.model.request.AutorRequest;
+import mx.uady.appbusqueda.service.AutorService;
 
 @RestController // Metaprogramacion
 @RequestMapping("/api")
-public class AlumnoRest {
+public class AutorRest {
 
     @Autowired
-    private AlumnoSerivce alumnoService;
+    private AutorService autorService;
 
-    // GET /api/alumnos
-    @GetMapping("/alumnos")
-    public ResponseEntity<List<Alumno>> getAlumnos() {
+    // GET /api/autores
+    @GetMapping("/autores")
+    public ResponseEntity<List<Autor>> getAutores() {
 
         // ResponseEntity es una abstraccion de una respuesta HTTP, con body y headers
-
-        return ResponseEntity.ok().body(alumnoService.obtenerAlumnos());
+        return ResponseEntity.ok().body(autorService.obtenerAutores());
     }
 
-    // POST /api/alumnos
-    /*@PostMapping("/alumnos")
-    public ResponseEntity<Alumno> postAlumnos(@RequestBody @Valid AlumnoRequest request) throws URISyntaxException {
+    // POST /api/autores
+    @PostMapping("/autores")
+    public ResponseEntity<Autor> postAutores(@RequestBody @Valid AutorRequest request) throws URISyntaxException {
         
-        // RequestBody le indica a Java que estamos esperando un request que cumpla con los campos del Objeto AlumnoRequest
+        // RequestBody le indica a Java que estamos esperando un request que cumpla con los campos del Objeto AutorRequest
         
-        Alumno alumno = alumnoService.crearAlumno(request);
+        Autor autor = autorService.crearAutor(request);
 
         // 201 Created
         // Header: Location
         return ResponseEntity
-            .created(new URI("/alumnos/" + alumno.getId()))
-            .body(alumno);
-    }*/
+            .created(new URI("/autores/" + autor.getId()))
+            .body(autor);
+    }
 
-    // GET /api/alumnos/3 -> 200
+    // GET /api/autores/3 -> 200
     // Validar que exista, si no existe Lanzar un RuntimeException
-    @GetMapping("/alumnos/{id}")
-    public ResponseEntity<Alumno> getAlumno(@PathVariable Integer id){
+    @GetMapping("/autores/{id}")
+    public ResponseEntity<Autor> getAutor(@PathVariable Integer id){
 
-        return ResponseEntity.ok().body(alumnoService.getAlumno(id));
+        return ResponseEntity.ok().body(autorService.getAutor(id));
     }
 
     // Validar que exista, si no existe Lanzar un RuntimeException
-    @PutMapping("/alumnos/{id}")
-    public ResponseEntity<Alumno> putAlumnos(@PathVariable Integer id, @RequestBody AlumnoRequest request)
+    @PutMapping("/autores/{id}")
+    public ResponseEntity<Autor> putAutores(@PathVariable Integer id, @RequestBody AutorRequest request)
             throws URISyntaxException {
 
-        Alumno alumno = alumnoService.editarAlumno(id, request);
+        Autor autor = autorService.editarAutor(id, request);
 
         return ResponseEntity
             .ok()
-            .body(alumno);
+            .body(autor);
     }
 
     // Validar que exista, si no existe Lanzar un RuntimeException
-    @DeleteMapping("/alumnos/{id}")
-    public ResponseEntity deleteAlumno(@PathVariable Integer id){
+    @DeleteMapping("/autores/{id}")
+    public ResponseEntity deleteAutor(@PathVariable Integer id){
 
-        String response = alumnoService.borrarAlumno(id);
+        String response = autorService.borrarAutor(id);
 
         return ResponseEntity
             .ok()

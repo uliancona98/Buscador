@@ -11,6 +11,8 @@ import java.util.List;
 import java.time.format.DateTimeFormatter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn;
 
 @Entity
 @Table(name = "libros")

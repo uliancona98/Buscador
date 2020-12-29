@@ -1,7 +1,5 @@
 package mx.uady.appbusqueda.service;
 
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +42,7 @@ public class LoginService {
     }
     
      public void logout(String auth) {
-         TokenBlacklist token = new TokenBlacklist(auth);
-         tokenRepository.save(token);
+        TokenBlacklist token = new TokenBlacklist(auth);
+        tokenRepository.save(token);
     }
 }
