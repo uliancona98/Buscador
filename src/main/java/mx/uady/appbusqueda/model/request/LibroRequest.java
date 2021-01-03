@@ -3,10 +3,8 @@ import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
 import java.time.LocalDate;
-import java.time.LocalDate;
-
+import org.springframework.format.annotation.DateTimeFormat;
 public class LibroRequest{
     
     @NotNull
@@ -22,7 +20,7 @@ public class LibroRequest{
  
     @NotEmpty
     @PastOrPresent(message = "La fecha no cumple con el formato correcto")
-    //@DateTimeFormat(pattern="yyyy-MM-dd")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     @NotNull(message = "Por favor, tiene que ingresar un valor")
     private LocalDate fechaPublicacion;
 
