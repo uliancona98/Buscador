@@ -51,7 +51,7 @@ public class AutorLibroRest {
     public ResponseEntity<AutorLibro> putAutorLibro(@PathVariable Integer idLibro, @PathVariable Integer idAutor, @RequestBody AutorLibroRequest request)
             throws URISyntaxException {
 
-        AutorLibro autorLibro = autorLibroService.editarAutorLibro(idAutor,idLibro, request);
+        AutorLibro autorLibro = autorLibroService.editarAutorLibro(idLibro, idAutor, request);
         return ResponseEntity
             .ok()
             .body(autorLibro);

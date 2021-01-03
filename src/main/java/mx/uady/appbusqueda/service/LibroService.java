@@ -2,6 +2,7 @@ package mx.uady.appbusqueda.service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -79,10 +80,13 @@ public class LibroService {
         if(libros.size() < id || id <= 0){
             throw new NotFoundException("No existe ese libro");
         }
+        Optional<Libro> libro = libroRepository.findById(id);
+        List<AutorLibro> autoresLibro = autorLibroRepository.findByLibro(libro.get());
 
-        List<AutorLibro> autoresLibro = autorLibroRepository.findByIdLibro(id);
+        //libroRepository.deleteById(id);
+        //return "Libro Borrado";
 
-        if(autoresLibro.isEmpty()){
+        if(autoresLibro.size()==0){
             libroRepository.deleteById(id);
             return "Libro Borrado";
         } else {

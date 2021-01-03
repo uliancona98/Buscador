@@ -37,7 +37,6 @@ public class UsuarioService {
         if (opt.isPresent()) {
             return opt.get();
         }
-
         throw new NotFoundException();
     }
 

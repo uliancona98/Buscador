@@ -3,9 +3,12 @@ import java.util.Optional;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import jdk.javadoc.internal.doclets.formats.html.SourceToHTMLConverter;
 import mx.uady.appbusqueda.exception.NotFoundException;
 
 import mx.uady.appbusqueda.model.AutorLibro;
@@ -37,12 +40,18 @@ public class AutorLibroService {
         Optional <Libro> libro = libroRepository.findById(request.getIdLibro());
         Integer idLibro = request.getIdLibro();
         Integer idAutor = request.getIdAutor();
-        Optional<AutorLibro> autorLibroExistente = autorLibroRepository.findByIdLibroAndIdAutor(idLibro, idAutor);
+        //AutorLibro autorLibroExistente = autorLibroRepository.findByIdLibroAndIdAutor(idLibro, idAutor).get(0);
+        List<AutorLibro> autoresLibros = new LinkedList<>();
+         autorLibroRepository.findAll().iterator().forEachRemaining(autoresLibros::add);
+         AutorLibro autorLibroExistente = null;//MAL
+
+
+
         if (!autor.isPresent()) {
             throw new NotFoundException("El autor no está registrado");
         }else if(!libro.isPresent()){
             throw new NotFoundException("El libro no está registrado");
-        }else if (!autorLibroExistente.isPresent()) {
+        }else if (autorLibroExistente==null) {
             AutorLibro autorLibro = new AutorLibro();
             autorLibro.setAutor(autor.get());
             autorLibro.setLibro(libro.get());
@@ -59,40 +68,58 @@ public class AutorLibroService {
 
         libroRepository.findById(idLibro)
             .orElseThrow(() -> new NotFoundException("El libro no está registrado"));
+            
+        List<AutorLibro> autoresLibros = new LinkedList<>();
+        autorLibroRepository.findAll().iterator().forEachRemaining(autoresLibros::add);
 
-        return autorLibroRepository.findByIdLibroAndIdAutor(idLibro, idAutor)
-            .orElseThrow(() -> new NotFoundException("El autor y el libro no se encuentra"));
-    }
-
-    public AutorLibro editarAutorLibro(Integer id, Integer idAutor, Integer idLibro, AutorLibroRequest request) {
-
-        autorRepository.findById(idAutor)
-            .orElseThrow(() -> new NotFoundException("El autor no está registrado"));
-
-        libroRepository.findById(idLibro)
-            .orElseThrow(() -> new NotFoundException("El libro no está registrado"));
-
-        return autorLibroRepository.findByIdLibroAndIdAutor(idLibro,idAutor)
-        .map(autorLibro -> {
-            return autorLibroRepository.save(autorLibro);
-        })
-        .orElseThrow(() -> new NotFoundException("El autor y el libro no se encuentra"));
-    }
-
-    public void borrarAutorLibro(Integer id, Integer idLibro, Integer idAutor) {
-
-        libroRepository.findById(idLibro)
-            .orElseThrow(() -> new NotFoundException("El libro no está registrado"));
-
-        autorRepository.findById(idAutor)
-            .orElseThrow(() -> new NotFoundException("El autor no está registrado"));
-
-        AutorLibro autorLibroExistente = autorLibroRepository.findByIdLibroAndIdAutor(idLibro, idAutor);
-        //checar
-        if (autorLibroExistente !=null) {
-            autorLibroRepository.deleteById(autorLibroExistente.getId());
+        //List<AutorLibro> autorLibroExistenteLista = autorLibroRepository.findByIdLibroAndIdAutor(idLibro, idAutor);
+        if(autoresLibros.size()>0){
+            return autoresLibros.get(0);
         }
-        throw new NotFoundException("No se encontró al libro y al autor");
+        throw new NotFoundException("El autor y el libro no se encuentra");
+    }
+
+    public AutorLibro editarAutorLibro(Integer idLibro, Integer idAutor, AutorLibroRequest request) {
+
+        autorRepository.findById(idAutor)
+            .orElseThrow(() -> new NotFoundException("El autor no está registrado"));
+
+        libroRepository.findById(idLibro)
+            .orElseThrow(() -> new NotFoundException("El libro no está registrado"));
+
+        Optional<Autor> autor = autorRepository.findById(idAutor);
+        Optional<Libro> libro = libroRepository.findById(idLibro);
+
+        List<AutorLibro> autorLibroExistenteLista = autorLibroRepository.findByLibroAndAutor(libro.get(), autor.get());
+
+
+
+        if(autorLibroExistenteLista.size()==1){//check
+            return autorLibroRepository.save(autorLibroExistenteLista.get(0));
+        }
+        throw new NotFoundException("El autor y el libro no se encuentra");
+    }
+
+    public void borrarAutorLibro(Integer idLibro, Integer idAutor) {
+
+        libroRepository.findById(idLibro)
+            .orElseThrow(() -> new NotFoundException("El libro no está registrado"));
+
+        autorRepository.findById(idAutor)
+            .orElseThrow(() -> new NotFoundException("El autor no está registrado"));
+
+
+        List<AutorLibro> autoresLibros = new LinkedList<>();
+        autorLibroRepository.findAll().iterator().forEachRemaining(autoresLibros::add);
+        
+
+        Optional<Autor> autor = autorRepository.findById(idAutor);
+        Optional<Libro> libro = libroRepository.findById(idLibro);
+        List<AutorLibro> autorLibroExistenteLista = autorLibroRepository.findByLibroAndAutor(libro.get(), autor.get());
+        if(autorLibroExistenteLista.size()==1){
+            autorLibroRepository.deleteById(autorLibroExistenteLista.get(0).getId());
+        }
+        throw new NotFoundException("El autor y el libro no se encuentra");
     }
     
 }

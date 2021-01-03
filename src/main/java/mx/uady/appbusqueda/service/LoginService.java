@@ -34,10 +34,6 @@ public class LoginService {
         }
         usuarioRepository.save(usuario);
         String jwt = jwtTokenUtil.generateToken(usuario);
-
-        //String token = UUID.randomUUID().toString();
-
-
         return jwt;
     }
     

@@ -2,6 +2,7 @@ package mx.uady.appbusqueda.service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,9 +62,11 @@ public class AutorService {
             throw new NotFoundException("No existe ese autor");
         }
 
-        List<AutorLibro> autoresLibro = autorLibroRepository.findByIdAutor(id);
-
-        if(autoresLibro.isEmpty()){
+        Optional<Autor> autor = autorRepository.findById(id);
+        List<AutorLibro> autoresLibro = autorLibroRepository.findByAutor(autor.get());
+        //autorRepository.deleteById(id);
+        //return "Autor Borrado";
+        if(autoresLibro.size()==0){
             autorRepository.deleteById(id);
             return "Autor Borrado";
         } else {
