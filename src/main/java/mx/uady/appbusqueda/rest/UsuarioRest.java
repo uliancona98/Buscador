@@ -1,7 +1,8 @@
 package mx.uady.appbusqueda.rest;
-
+import java.util.UUID;
 import java.util.List;
-
+import java.net.URI;
+import java.net.URISyntaxException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import javax.validation.Valid;
 
 import mx.uady.appbusqueda.model.Usuario;
 import mx.uady.appbusqueda.model.request.UsuarioRequest;
@@ -25,6 +27,17 @@ public class UsuarioRest {
     @Autowired
     private UsuarioService usuarioService;
     
+    @PostMapping("/usuarios")
+    public ResponseEntity<Usuario> postUsuario(@RequestBody @Valid UsuarioRequest request) throws URISyntaxException {
+        
+        Usuario usuario = usuarioService.crearUsuario(request);
+        // 201 Created
+        // Header: Location
+        return ResponseEntity
+            .created(new URI("/usuarios/" + usuario.getId()))
+            .body(usuario);
+    }
+
     // GET /api/usuarios
     @GetMapping("/usuarios")
     public ResponseEntity<List<Usuario>> getUsuario() {

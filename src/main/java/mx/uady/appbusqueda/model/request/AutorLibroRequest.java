@@ -8,8 +8,6 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 public class AutorLibroRequest {
-
-    private Integer horas;
     
     @NotNull
     private Integer idAutor;
@@ -40,8 +38,7 @@ public class AutorLibroRequest {
     @Override
     public String toString() {
         return "{" +
-            "horas='" + getHoras() + "'" +
-            ", idAutor='" + getIdAutor() + "'" +
+            "idAutor='" + getIdAutor() + "'" +
             ", idLibro='" + getIdLibro() + "'" +
             "}";
     }

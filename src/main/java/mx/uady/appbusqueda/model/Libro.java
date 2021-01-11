@@ -7,10 +7,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 import java.time.format.DateTimeFormatter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.OneToOne;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.CascadeType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import javax.persistence.JoinColumn;
 
 @Entity
 @Table(name = "libros")
@@ -23,18 +31,14 @@ public class Libro {
     @Column
     private String titulo;
 
-    @Column
-    private String contenido;
-
     @Column 
     private LocalDate fechaPublicacion;
 
     @Column
     private String editorial;
-    
-    @Column
-    private String nombreArchivo;
 
+    @Column
+    private String autor;
     @Column
     private String isbn;
 
@@ -42,6 +46,17 @@ public class Libro {
     @JoinColumn(name = "idUsuario")
     private Usuario idUsuario;
 
+    @ManyToMany(cascade = {
+        CascadeType.PERSIST,
+        CascadeType.MERGE
+    })
+    @JoinTable(
+        name = "autores_libros",
+        joinColumns = {@JoinColumn(name = "id_libro")},
+        inverseJoinColumns = {@JoinColumn(name = "id_autor")}
+    )
+    @JsonManagedReference
+    private Set<Autor> autores;
 
     public Libro() {
     }
@@ -56,6 +71,14 @@ public class Libro {
     public void setUsuario(Usuario idUsuario) {
         this.idUsuario = idUsuario;
     }
+    
+    public void setAutores(Set<Autor> autores){
+        this.autores = autores;
+    }
+
+    public Set<Autor> getAutores(){
+        return this.autores;
+    }
 
     public Usuario getUsuario() {
         return idUsuario;
@@ -65,22 +88,16 @@ public class Libro {
         return this.titulo;
     }
 
+    public void setAutor(String autor) {
+        this.autor = autor;
+    }
+
+    public String getAutor() {
+        return this.autor;
+    }
+
     public void setTitulo(String titulo) {
         this.titulo = titulo;
-    }
-
-    /**
-     * @param contenido the contenido to set
-     */
-    public void setContenido(String contenido) {
-        this.contenido = contenido;
-    }
-
-    /**
-     * @return the contenido
-     */
-    public String getContenido() {
-        return this.contenido;
     }
 
     public LocalDate getFechaPublicacion() {
@@ -97,14 +114,6 @@ public class Libro {
 
     public void setEditorial(String editorial) {
         this.editorial = editorial;
-    }
-
-    public String getNombreArchivo() {
-        return this.nombreArchivo;
-    }
-
-    public void setNombreArchivo(String nombreArchivo) {
-        this.nombreArchivo = nombreArchivo;
     }
 
     public String getIsbn() {

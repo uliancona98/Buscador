@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-12-2020 a las 18:08:00
+-- Tiempo de generación: 03-01-2021 a las 23:28:53
 -- Versión del servidor: 10.4.14-MariaDB
 -- Versión de PHP: 7.3.23
 
@@ -40,8 +40,8 @@ CREATE TABLE `autores` (
 
 CREATE TABLE `autoreslibros` (
   `id` int(11) NOT NULL,
-  `idLibro` varchar(45) NOT NULL,
-  `idAutor` varchar(45) NOT NULL
+  `id_libro` varchar(45) NOT NULL,
+  `id_autor` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -53,13 +53,31 @@ CREATE TABLE `autoreslibros` (
 CREATE TABLE `libros` (
   `id` int(11) NOT NULL,
   `titulo` varchar(45) NOT NULL,
-  `contenido` text NOT NULL,
-  `fechaPublicacion` date NOT NULL,
+  `contenido` text DEFAULT NULL,
+  `fecha_publicacion` date NOT NULL,
   `editorial` varchar(45) DEFAULT NULL,
-  `nombreArchivo` varchar(45) DEFAULT NULL,
+  `nombre_archivo` varchar(45) DEFAULT NULL,
   `isbn` varchar(45) DEFAULT NULL,
-  `idUsuario` int(11) DEFAULT NULL
+  `id_usuario` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tokens`
+--
+
+CREATE TABLE `tokens` (
+  `id` int(11) NOT NULL,
+  `token` varchar(1000) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `tokens`
+--
+
+INSERT INTO `tokens` (`id`, `token`) VALUES
+(1, 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1bGlhbmNvbmE5OCIsImV4cCI6MTYwOTcxODgyNiwiZXhwaXJhY2lvbiI6MTYwOTcxODgyNjAxMSwiaWF0IjoxNjA5NzAzODI2fQ.q_6yr_QFSRa5qbFoEGwpRkE-46sdeosnFAIDSlAQIevHD19S-5Fnia3ULsApDiEvQSQqO3SB7Kuj5vWZNFMduQ');
 
 -- --------------------------------------------------------
 
@@ -73,6 +91,15 @@ CREATE TABLE `usuarios` (
   `password` varchar(45) NOT NULL,
   `secret` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `usuarios`
+--
+
+INSERT INTO `usuarios` (`id`, `usuario`, `password`, `secret`) VALUES
+(1, 'uliancona', '12345', NULL),
+(2, 'uliancona98', '12345678', 'd7d6cd8f-0ba0-4324-88eb-6bb0f43cb2a4'),
+(3, 'shaidbojorquez', '123456789', '150a04ae-a4d6-483c-aa0e-277b832d49d6');
 
 --
 -- Índices para tablas volcadas
@@ -98,6 +125,13 @@ ALTER TABLE `libros`
 ALTER TABLE `libros` ADD FULLTEXT KEY `contenido` (`contenido`);
 
 --
+-- Indices de la tabla `tokens`
+--
+ALTER TABLE `tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `token` (`token`);
+
+--
 -- Indices de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
@@ -111,7 +145,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `autores`
 --
 ALTER TABLE `autores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `autoreslibros`
@@ -126,10 +160,16 @@ ALTER TABLE `libros`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de la tabla `tokens`
+--
+ALTER TABLE `tokens`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
