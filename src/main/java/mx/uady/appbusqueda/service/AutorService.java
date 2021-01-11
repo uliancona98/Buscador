@@ -10,12 +10,10 @@ import org.springframework.stereotype.Service;
 import mx.uady.appbusqueda.exception.NotFoundException;
 
 import mx.uady.appbusqueda.model.request.AutorRequest;
-import mx.uady.appbusqueda.model.request.AutorLibroRequest;
 import mx.uady.appbusqueda.model.AutorLibro;
 import mx.uady.appbusqueda.model.Autor;
 import mx.uady.appbusqueda.repository.AutorRepository;
 import mx.uady.appbusqueda.repository.AutorLibroRepository;
-import mx.uady.appbusqueda.repository.UsuarioRepository;
 
 @Service
 public class AutorService {

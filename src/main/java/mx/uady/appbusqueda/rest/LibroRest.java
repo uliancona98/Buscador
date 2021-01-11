@@ -3,6 +3,7 @@ package mx.uady.appbusqueda.rest;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -10,7 +11,6 @@ import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,12 +20,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import mx.uady.appbusqueda.exception.NotFoundException;
 import mx.uady.appbusqueda.model.Libro;
 import mx.uady.appbusqueda.model.request.LibroRequest;
 import mx.uady.appbusqueda.service.LibroService;
 
-@RestController // Metaprogramacion
+@RestController
 @RequestMapping("/api")
 public class LibroRest {
 
@@ -77,7 +76,7 @@ public class LibroRest {
 
     // Validar que exista, si no existe Lanzar un RuntimeException
     @DeleteMapping("/libros/{id}")
-    public ResponseEntity deleteLibro(@PathVariable Integer id){
+    public ResponseEntity<Map<String, String>> deleteLibro(@PathVariable Integer id){
 
         String response = libroService.borrarLibro(id);
 

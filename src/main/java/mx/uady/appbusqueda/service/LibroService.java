@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import mx.uady.appbusqueda.exception.NotFoundException;
 
 import mx.uady.appbusqueda.model.request.LibroRequest;
-import mx.uady.appbusqueda.model.request.AutorLibroRequest;
 import mx.uady.appbusqueda.model.AutorLibro;
 import mx.uady.appbusqueda.model.Libro;
 import mx.uady.appbusqueda.model.Usuario;
@@ -45,9 +44,6 @@ public class LibroService {
         libro.setTitulo(request.getTitulo());
         Usuario usuario = usuarioRepository.findByUsuario(request.getUsuario());
         libro.setUsuario(usuario); //se le envia el usuario
-
-        //libro.setNombre(request.getNombre());
-        //libro.setHoras(request.getHoras());
         libro = libroRepository.save(libro); // INSERT
         return libro;
     }
@@ -82,9 +78,6 @@ public class LibroService {
         }
         Optional<Libro> libro = libroRepository.findById(id);
         List<AutorLibro> autoresLibro = autorLibroRepository.findByLibro(libro.get());
-
-        //libroRepository.deleteById(id);
-        //return "Libro Borrado";
 
         if(autoresLibro.size()==0){
             libroRepository.deleteById(id);

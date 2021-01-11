@@ -8,7 +8,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,8 +47,7 @@ public class AutorLibroRest {
 
 
     @PutMapping("/autoresLibros/{idLibro}/{idAutor}")
-    public ResponseEntity<AutorLibro> putAutorLibro(@PathVariable Integer idLibro, @PathVariable Integer idAutor, @RequestBody AutorLibroRequest request)
-            throws URISyntaxException {
+    public ResponseEntity<AutorLibro> putAutorLibro(@PathVariable Integer idLibro, @PathVariable Integer idAutor, @RequestBody AutorLibroRequest request) {
 
         AutorLibro autorLibro = autorLibroService.editarAutorLibro(idLibro, idAutor, request);
         return ResponseEntity
@@ -63,7 +61,7 @@ public class AutorLibroRest {
     }
 
     @DeleteMapping("/autoresLibros/{idLibro}/{idAutor}")
-    public ResponseEntity deleteAutorLibro(@PathVariable Integer idLibro, @PathVariable Integer idAutor){
+    public ResponseEntity<String> deleteAutorLibro(@PathVariable Integer idLibro, @PathVariable Integer idAutor){
         autorLibroService.borrarAutorLibro(idLibro, idAutor);
         return ResponseEntity
             .ok()

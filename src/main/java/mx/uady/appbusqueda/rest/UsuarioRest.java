@@ -1,5 +1,4 @@
 package mx.uady.appbusqueda.rest;
-import java.util.UUID;
 import java.util.List;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -16,7 +15,6 @@ import javax.validation.Valid;
 import mx.uady.appbusqueda.model.Usuario;
 import mx.uady.appbusqueda.model.request.UsuarioRequest;
 import mx.uady.appbusqueda.service.UsuarioService;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -61,15 +59,4 @@ public class UsuarioRest {
             .ok()
             .body(u);
     }
-    
-    //DELETE /api/usuario/3
-    /*@DeleteMapping("/usuarios/{id}")
-    public ResponseEntity deleteUsuario(@PathVariable Integer id){
-
-        usuarioService.borrarUsuario(id);
-
-        return ResponseEntity
-            .ok()
-            .body("Usuario eliminado");
-    }*/
 }

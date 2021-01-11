@@ -14,8 +14,6 @@ import mx.uady.appbusqueda.model.Usuario;
 import mx.uady.appbusqueda.model.request.UsuarioRequest;
 import mx.uady.appbusqueda.repository.UsuarioRepository;
 
-import org.springframework.security.core.context.SecurityContextHolder;
-
 @Service
 public class UsuarioService {
 
