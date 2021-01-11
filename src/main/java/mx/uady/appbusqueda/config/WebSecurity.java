@@ -25,7 +25,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable()
             .authorizeRequests()
                 .antMatchers("/api/login", "/api/register").permitAll()
-                .antMatchers("/api/search").permitAll()
                 .anyRequest().authenticated()
             .and()
                 .addFilterBefore(jwtRequestFilter, BasicAuthenticationFilter.class);
