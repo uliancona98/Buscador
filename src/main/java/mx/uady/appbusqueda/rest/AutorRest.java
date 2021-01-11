@@ -22,6 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import mx.uady.appbusqueda.exception.NotFoundException;
 import mx.uady.appbusqueda.model.Autor;
+import mx.uady.appbusqueda.model.AutorLibro;
+import mx.uady.appbusqueda.model.Libro;
+
 import mx.uady.appbusqueda.model.request.AutorRequest;
 import mx.uady.appbusqueda.service.AutorService;
 
@@ -61,6 +64,11 @@ public class AutorRest {
     public ResponseEntity<Autor> getAutor(@PathVariable Integer id){
 
         return ResponseEntity.ok().body(autorService.getAutor(id));
+    }
+
+    @GetMapping("/autores/{id}/libros")
+    public ResponseEntity<List<Libro>> getAutorLibros(@PathVariable Integer id){
+        return ResponseEntity.ok().body(autorService.getAutorLibros(id));
     }
 
     // Validar que exista, si no existe Lanzar un RuntimeException

@@ -41,22 +41,21 @@ public class AutorLibroService {
         Integer idLibro = request.getIdLibro();
         Integer idAutor = request.getIdAutor();
         //AutorLibro autorLibroExistente = autorLibroRepository.findByIdLibroAndIdAutor(idLibro, idAutor).get(0);
-        List<AutorLibro> autoresLibros = new LinkedList<>();
-         autorLibroRepository.findAll().iterator().forEachRemaining(autoresLibros::add);
-         AutorLibro autorLibroExistente = null;//MAL
-
 
 
         if (!autor.isPresent()) {
             throw new NotFoundException("El autor no está registrado");
         }else if(!libro.isPresent()){
             throw new NotFoundException("El libro no está registrado");
-        }else if (autorLibroExistente==null) {
-            AutorLibro autorLibro = new AutorLibro();
-            autorLibro.setAutor(autor.get());
-            autorLibro.setLibro(libro.get());
-            autorLibro = autorLibroRepository.save(autorLibro); // INSERT
-            return autorLibro;
+        }else{
+            Libro libroB = libro.get();
+            Autor autorB = autor.get();
+            libroB.getAutores().add(autorB);
+            libroRepository.save(libroB);  
+            List<AutorLibro> autoresLibros = autorLibroRepository.findByLibroAndAutor(libroB, autorB);
+            if (autoresLibros.size()==1) {
+                return autoresLibros.get(0);
+            }
         }
         throw new NotFoundException("El autor y el libro ya está registrado");
     }
@@ -69,14 +68,14 @@ public class AutorLibroService {
         libroRepository.findById(idLibro)
             .orElseThrow(() -> new NotFoundException("El libro no está registrado"));
             
-        List<AutorLibro> autoresLibros = new LinkedList<>();
-        autorLibroRepository.findAll().iterator().forEachRemaining(autoresLibros::add);
-
-        //List<AutorLibro> autorLibroExistenteLista = autorLibroRepository.findByIdLibroAndIdAutor(idLibro, idAutor);
-        if(autoresLibros.size()>0){
-            return autoresLibros.get(0);
+        Optional<Autor> autor = autorRepository.findById(idAutor);
+        Optional<Libro> libro = libroRepository.findById(idLibro);
+        List<AutorLibro> autorLibroExistenteLista = autorLibroRepository.findByLibroAndAutor(libro.get(), autor.get());
+        if(autorLibroExistenteLista.size()==1){
+            return autorLibroExistenteLista.get(0);
+        }else{
+            throw new NotFoundException("El autor y el libro no se encuentra");
         }
-        throw new NotFoundException("El autor y el libro no se encuentra");
     }
 
     public AutorLibro editarAutorLibro(Integer idLibro, Integer idAutor, AutorLibroRequest request) {
@@ -92,8 +91,6 @@ public class AutorLibroService {
 
         List<AutorLibro> autorLibroExistenteLista = autorLibroRepository.findByLibroAndAutor(libro.get(), autor.get());
 
-
-
         if(autorLibroExistenteLista.size()==1){//check
             return autorLibroRepository.save(autorLibroExistenteLista.get(0));
         }
@@ -108,18 +105,14 @@ public class AutorLibroService {
         autorRepository.findById(idAutor)
             .orElseThrow(() -> new NotFoundException("El autor no está registrado"));
 
-
-        List<AutorLibro> autoresLibros = new LinkedList<>();
-        autorLibroRepository.findAll().iterator().forEachRemaining(autoresLibros::add);
-        
-
         Optional<Autor> autor = autorRepository.findById(idAutor);
         Optional<Libro> libro = libroRepository.findById(idLibro);
         List<AutorLibro> autorLibroExistenteLista = autorLibroRepository.findByLibroAndAutor(libro.get(), autor.get());
         if(autorLibroExistenteLista.size()==1){
             autorLibroRepository.deleteById(autorLibroExistenteLista.get(0).getId());
+        }else{
+            throw new NotFoundException("El autor y el libro no se encuentra");
         }
-        throw new NotFoundException("El autor y el libro no se encuentra");
     }
     
 }

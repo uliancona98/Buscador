@@ -4,21 +4,16 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.Set;
+import java.util.HashSet;
 import org.springframework.format.annotation.DateTimeFormat;
 public class LibroRequest{
     
     @NotNull
     @NotEmpty
-    private String usuario;
-
-    @NotNull
-    @NotEmpty
     @Size(min = 3, max = 255)
     private String titulo;
-
-    private String contenido;
  
-    @NotEmpty
     @PastOrPresent(message = "La fecha no cumple con el formato correcto")
     @DateTimeFormat(pattern="yyyy-MM-dd")
     @NotNull(message = "Por favor, tiene que ingresar un valor")
@@ -27,20 +22,21 @@ public class LibroRequest{
 
     private String editorial;
     
-    private String nombreArchivo;
-
     private String isbn;
+
+    private String autor;
+
+    private Set<AutorRequest> autores = new HashSet<>();
 
     public LibroRequest(){
         
     }
-
-    public String getUsuario() {
-        return this.usuario;
+    public void setAutor(AutorRequest autor){
+        this.autores.add(autor);
     }
 
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
+    public Set<AutorRequest> getAutores(){
+        return this.autores;
     }
 
     public String getTitulo() {
@@ -50,19 +46,12 @@ public class LibroRequest{
     public void setTitulo(String titulo) {
         this.titulo = titulo;
     }
-
-    /**
-     * @param contenido the contenido to set
-     */
-    public void setContenido(String contenido) {
-        this.contenido = contenido;
+    public void setAutor(String autor) {
+        this.autor = autor;
     }
 
-    /**
-     * @return the contenido
-     */
-    public String getContenido() {
-        return this.contenido;
+    public String getAutor() {
+        return this.autor;
     }
 
     public LocalDate getFechaPublicacion() {
@@ -79,14 +68,6 @@ public class LibroRequest{
 
     public void setEditorial(String editorial) {
         this.editorial = editorial;
-    }
-
-    public String getNombreArchivo() {
-        return this.nombreArchivo;
-    }
-
-    public void setNombreArchivo(String nombreArchivo) {
-        this.nombreArchivo = nombreArchivo;
     }
 
     public String getIsbn() {
