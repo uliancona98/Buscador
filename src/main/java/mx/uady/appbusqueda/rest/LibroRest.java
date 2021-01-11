@@ -1,4 +1,5 @@
 package mx.uady.appbusqueda.rest;
+import java.io.InputStream;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -6,9 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
-
 import java.util.Collections;
-
+import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,7 +21,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import mx.uady.appbusqueda.model.Libro;
+import mx.uady.appbusqueda.model.Usuario;
 import mx.uady.appbusqueda.model.request.LibroRequest;
+import mx.uady.appbusqueda.model.ResponseMessage;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.io.InputStreamReader;
 import mx.uady.appbusqueda.service.LibroService;
 
 @RestController
@@ -34,7 +40,6 @@ public class LibroRest {
     // GET /api/libros
     @GetMapping("/libros")
     public ResponseEntity<List<Libro>> getLibros() {
-
         // ResponseEntity es una abstraccion de una respuesta HTTP, con body y headers
         return ResponseEntity.ok().body(libroService.obtenerLibros());
     }
@@ -42,10 +47,9 @@ public class LibroRest {
     // POST /api/libros
     @PostMapping("/libros")
     public ResponseEntity<Libro> postLibros(@RequestBody @Valid LibroRequest request) throws URISyntaxException {
-        
         // RequestBody le indica a Java que estamos esperando un request que cumpla con los campos del Objeto LibroRequest
-        
-        Libro libro = libroService.crearLibro(request);
+        Usuario usuario = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Libro libro = libroService.crearLibro(request, usuario);
 
         // 201 Created
         // Header: Location
@@ -53,6 +57,40 @@ public class LibroRest {
             .created(new URI("/libros/" + libro.getId()))
             .body(libro);
     }
+/*Upload csv or pdf*/
+    @PostMapping("/upload") 
+    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
+      String message = "";
+  
+      if (libroService.hasCSVFormat(file)) {
+        try {
+          Usuario usuario = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+          InputStream inputStream = file.getInputStream();
+
+          List<Libro> libros = libroService.saveCSV(file, usuario);
+          message = "Uploaded the file successfully: " + file.getOriginalFilename();
+          return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(libros));
+        } catch (Exception e) {
+          message = "Could not upload the file: " + file.getOriginalFilename() + "!";
+          return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+        }
+      }else if(libroService.hasPdfFormat(file)){
+        //guarda el pdf en una carpeta
+        try {
+          libroService.savePDF(file);
+          message = "Saved the file successfully: " + file.getOriginalFilename();
+          return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+        } catch (Exception e) {
+          message = "Could not save the file: " + file.getOriginalFilename() + "!";
+          return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+        }
+      //}
+      }
+      message = "Please upload a csv or pdf file!";
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
+    }
+
 
     // GET /api/libros/3 -> 200
     // Validar que exista, si no existe Lanzar un RuntimeException

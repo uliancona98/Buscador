@@ -29,9 +29,7 @@ public class UsuarioService {
 
 
     public Usuario getUsuario(Integer id) {
-
         Optional<Usuario> opt = usuarioRepository.findById(id);
-
         if (opt.isPresent()) {
             return opt.get();
         }

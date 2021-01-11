@@ -20,22 +20,25 @@ import javax.persistence.GenerationType;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity
-@Table(name = "autoreslibros")
+@Table(name = "autores_libros")
 public class AutorLibro {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     
+    @JsonManagedReference
     @ManyToOne(optional=false)
-    @JoinColumn(name="idLibro",referencedColumnName="id", insertable=false, updatable=false)
+    @JoinColumn(name="id_libro",referencedColumnName="id", insertable=false, updatable=false)
     Libro libro;
 
+    @JsonBackReference
     @ManyToOne(optional=false)
-    @JoinColumn(name="idAutor",referencedColumnName="id", insertable=false, updatable=false)
+    @JoinColumn(name="id_autor",referencedColumnName="id", insertable=false, updatable=false)
     Autor autor;
 
 

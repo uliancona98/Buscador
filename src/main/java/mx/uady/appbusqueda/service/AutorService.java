@@ -2,6 +2,8 @@ package mx.uady.appbusqueda.service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ArrayList;
+
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,8 @@ import mx.uady.appbusqueda.exception.NotFoundException;
 import mx.uady.appbusqueda.model.request.AutorRequest;
 import mx.uady.appbusqueda.model.AutorLibro;
 import mx.uady.appbusqueda.model.Autor;
+import mx.uady.appbusqueda.model.Libro;
+
 import mx.uady.appbusqueda.repository.AutorRepository;
 import mx.uady.appbusqueda.repository.AutorLibroRepository;
 
@@ -27,7 +31,7 @@ public class AutorService {
     public List<Autor> obtenerAutores() {
         
         List<Autor> autores = new LinkedList<>();
-        autorRepository.findAll().iterator().forEachRemaining(autores::add); // SELECT(id, nombre)
+        autorRepository.findAll().iterator().forEachRemaining(autores::add);
         return autores;
     }
 
@@ -43,6 +47,16 @@ public class AutorService {
             .orElseThrow(() -> new NotFoundException("No existe el autor"));
     }
 
+    public List<Libro> getAutorLibros(Integer idAutor){
+        Optional<Autor> autor = autorRepository.findById(idAutor);
+        List<AutorLibro> autoresLibros = autorLibroRepository.findByAutor(autor.get());
+        List<Libro> libros = new ArrayList();
+        for(int i=0;i<autoresLibros.size();i++){
+            libros.add(autoresLibros.get(i).getLibro());
+        }
+        return libros;
+    }
+
     public Autor editarAutor(Integer idAutor, AutorRequest request) {
         return autorRepository.findById(idAutor)
         .map(autor -> {
@@ -53,17 +67,8 @@ public class AutorService {
     }
 
     public String borrarAutor(Integer id) {
-
-        List<Autor> autores = new LinkedList<>();
-        autorRepository.findAll().iterator().forEachRemaining(autores::add);
-        if(autores.size() < id || id <= 0){
-            throw new NotFoundException("No existe ese autor");
-        }
-
         Optional<Autor> autor = autorRepository.findById(id);
         List<AutorLibro> autoresLibro = autorLibroRepository.findByAutor(autor.get());
-        //autorRepository.deleteById(id);
-        //return "Autor Borrado";
         if(autoresLibro.size()==0){
             autorRepository.deleteById(id);
             return "Autor Borrado";
