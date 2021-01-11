@@ -9,9 +9,7 @@ import mx.uady.appbusqueda.model.request.LoginRequest;
 import mx.uady.appbusqueda.repository.UsuarioRepository;
 import mx.uady.appbusqueda.repository.TokenRepository;
 import mx.uady.appbusqueda.config.JwtTokenUtil;
-import mx.uady.appbusqueda.exception.NotFoundException;
 
-import org.springframework.security.core.context.SecurityContextHolder;
 
 @Service
 public class LoginService {

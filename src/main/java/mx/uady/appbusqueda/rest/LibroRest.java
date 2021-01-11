@@ -4,12 +4,13 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
+
 import javax.validation.Valid;
 import java.util.Collections;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,10 +19,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import mx.uady.appbusqueda.exception.NotFoundException;
+
 import mx.uady.appbusqueda.model.Libro;
 import mx.uady.appbusqueda.model.Usuario;
 import mx.uady.appbusqueda.model.request.LibroRequest;
@@ -31,19 +29,8 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.io.InputStreamReader;
 import mx.uady.appbusqueda.service.LibroService;
-import org.springframework.security.core.context.*;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.security.core.Authentication;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-@RestController // Metaprogramacion
+@RestController
 @RequestMapping("/api")
 public class LibroRest {
 
@@ -127,7 +114,7 @@ public class LibroRest {
 
     // Validar que exista, si no existe Lanzar un RuntimeException
     @DeleteMapping("/libros/{id}")
-    public ResponseEntity deleteLibro(@PathVariable Integer id){
+    public ResponseEntity<Map<String, String>> deleteLibro(@PathVariable Integer id){
 
         String response = libroService.borrarLibro(id);
 
