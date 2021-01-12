@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 03-01-2021 a las 23:28:53
+-- Tiempo de generación: 10-01-2021 a las 06:11:48
 -- Versión del servidor: 10.4.14-MariaDB
 -- Versión de PHP: 7.3.23
 
@@ -32,17 +32,42 @@ CREATE TABLE `autores` (
   `nombre` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Volcado de datos para la tabla `autores`
+--
+
+INSERT INTO `autores` (`id`, `nombre`) VALUES
+(2, 'Victor Hugo'),
+(3, 'Eduardo Rodriguez'),
+(4, 'Ulises Ancona2'),
+(5, 'Ulises Ancona2'),
+(6, 'Ulises Ancona2'),
+(7, 'Ulises Ancona2'),
+(8, 'Ulises Ancona'),
+(9, 'Ulises Ancona2'),
+(10, 'Vladimir Ancona2'),
+(11, 'Vladimir Ancona2'),
+(12, 'Vladimir Ancona');
+
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `autoreslibros`
+-- Estructura de tabla para la tabla `autores_libros`
 --
 
-CREATE TABLE `autoreslibros` (
+CREATE TABLE `autores_libros` (
   `id` int(11) NOT NULL,
   `id_libro` varchar(45) NOT NULL,
   `id_autor` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `autores_libros`
+--
+
+INSERT INTO `autores_libros` (`id`, `id_libro`, `id_autor`) VALUES
+(4, '6', '12'),
+(5, '6', '11');
 
 -- --------------------------------------------------------
 
@@ -53,13 +78,24 @@ CREATE TABLE `autoreslibros` (
 CREATE TABLE `libros` (
   `id` int(11) NOT NULL,
   `titulo` varchar(45) NOT NULL,
-  `contenido` text DEFAULT NULL,
+  `autor` varchar(256) NOT NULL,
   `fecha_publicacion` date NOT NULL,
   `editorial` varchar(45) DEFAULT NULL,
-  `nombre_archivo` varchar(45) DEFAULT NULL,
   `isbn` varchar(45) DEFAULT NULL,
   `id_usuario` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `libros`
+--
+
+INSERT INTO `libros` (`id`, `titulo`, `autor`, `fecha_publicacion`, `editorial`, `isbn`, `id_usuario`) VALUES
+(1, 'Libro1', '', '2019-01-01', NULL, NULL, 3),
+(2, 'Libro2', '', '2020-01-01', NULL, NULL, 3),
+(3, 'Libro2', '', '2020-01-01', NULL, NULL, 3),
+(4, 'Libro2', '', '2020-01-01', NULL, NULL, 3),
+(5, 'Libro55', '', '2020-01-01', NULL, NULL, 3),
+(6, 'Libro55', '', '2020-01-01', NULL, NULL, 3);
 
 -- --------------------------------------------------------
 
@@ -112,9 +148,9 @@ ALTER TABLE `autores`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `autoreslibros`
+-- Indices de la tabla `autores_libros`
 --
-ALTER TABLE `autoreslibros`
+ALTER TABLE `autores_libros`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -122,7 +158,6 @@ ALTER TABLE `autoreslibros`
 --
 ALTER TABLE `libros`
   ADD PRIMARY KEY (`id`);
-ALTER TABLE `libros` ADD FULLTEXT KEY `contenido` (`contenido`);
 
 --
 -- Indices de la tabla `tokens`
@@ -145,19 +180,19 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `autores`
 --
 ALTER TABLE `autores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT de la tabla `autoreslibros`
+-- AUTO_INCREMENT de la tabla `autores_libros`
 --
-ALTER TABLE `autoreslibros`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `autores_libros`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `libros`
 --
 ALTER TABLE `libros`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `tokens`

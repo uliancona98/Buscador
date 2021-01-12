@@ -12,14 +12,12 @@ import org.springframework.stereotype.Service;
 import mx.uady.appbusqueda.exception.NotFoundException;
 
 import mx.uady.appbusqueda.model.request.AutorRequest;
-import mx.uady.appbusqueda.model.request.AutorLibroRequest;
 import mx.uady.appbusqueda.model.AutorLibro;
 import mx.uady.appbusqueda.model.Autor;
 import mx.uady.appbusqueda.model.Libro;
 
 import mx.uady.appbusqueda.repository.AutorRepository;
 import mx.uady.appbusqueda.repository.AutorLibroRepository;
-import mx.uady.appbusqueda.repository.UsuarioRepository;
 
 @Service
 public class AutorService {
@@ -52,7 +50,7 @@ public class AutorService {
     public List<Libro> getAutorLibros(Integer idAutor){
         Optional<Autor> autor = autorRepository.findById(idAutor);
         List<AutorLibro> autoresLibros = autorLibroRepository.findByAutor(autor.get());
-        List<Libro> libros = new ArrayList();
+        List<Libro> libros = new ArrayList<>();
         for(int i=0;i<autoresLibros.size();i++){
             libros.add(autoresLibros.get(i).getLibro());
         }

@@ -1,8 +1,5 @@
-package mx.uady.appbusqueda.resource;
+package mx.uady.appbusqueda.rest;
 
-import java.util.LinkedList;
-import java.util.List;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.*;
@@ -10,33 +7,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.springframework.security.core.Authentication;
-import mx.uady.appbusqueda.model.Usuario;
-import mx.uady.appbusqueda.repository.UsuarioRepository;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.http.HttpStatus;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.validation.Valid;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Collections;
-
-import mx.uady.appbusqueda.exception.NotFoundException;
-import mx.uady.appbusqueda.repository.UsuarioRepository;
 
 import mx.uady.appbusqueda.config.JwtTokenUtil;
 
+import mx.uady.appbusqueda.model.Usuario;
 import mx.uady.appbusqueda.model.request.LoginRequest;
 import mx.uady.appbusqueda.model.request.UsuarioRequest;
 import mx.uady.appbusqueda.model.JwtResponse;
@@ -53,14 +35,12 @@ public class LoginRest {
     @Autowired
     private LoginService loginService;
     @Autowired
-    private UsuarioRepository usuarioRepository;
-    @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
     
     // POST /login
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody @Valid LoginRequest request) throws RuntimeException{
+    public ResponseEntity<?> login(@RequestBody @Valid LoginRequest request){
 
         Usuario usuario = usuarioService.getUsuario(request.getUsuario());
 
@@ -89,7 +69,7 @@ public class LoginRest {
 
     @PostMapping("/register")
     //crea un usuario con un nuevo token
-    public ResponseEntity register(@RequestBody @Valid UsuarioRequest request) throws URISyntaxException{
+    public ResponseEntity<Usuario> register(@RequestBody @Valid UsuarioRequest request) throws URISyntaxException{
         
         Usuario usuario = usuarioService.crearUsuario(request);
 

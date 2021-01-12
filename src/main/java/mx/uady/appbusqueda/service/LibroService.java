@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.io.InputStreamReader;
 import java.io.InputStream;
@@ -22,20 +21,16 @@ import java.util.Set;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.HashSet;
-import mx.uady.appbusqueda.model.request.LibroRequest;
-import mx.uady.appbusqueda.model.request.AutorLibroRequest;
+
 import mx.uady.appbusqueda.model.request.AutorRequest;
+import mx.uady.appbusqueda.model.request.LibroRequest;
 import mx.uady.appbusqueda.model.Autor;
 import mx.uady.appbusqueda.model.AutorLibro;
 import mx.uady.appbusqueda.model.Libro;
 import mx.uady.appbusqueda.model.Usuario;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
 import mx.uady.appbusqueda.repository.AutorRepository;
 import mx.uady.appbusqueda.repository.LibroRepository;
 import mx.uady.appbusqueda.repository.AutorLibroRepository;
-import mx.uady.appbusqueda.repository.UsuarioRepository;
-import org.apache.commons.csv.CSVRecord;
 
 @Service
 public class LibroService {
@@ -45,8 +40,7 @@ public class LibroService {
     private AutorRepository autorRepository;
     @Autowired
     private AutorLibroRepository autorLibroRepository;
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+
     public static String TYPECSV = "text/csv";
     public static String TYPEPDF = "application/pdf";
 
@@ -67,7 +61,7 @@ public class LibroService {
         libro.setUsuario(usuario); //se le envia el usuario
 
         Set<AutorRequest> autoresRequest = request.getAutores();
-        Iterator iterator = autoresRequest.iterator();
+        Iterator<AutorRequest> iterator = autoresRequest.iterator();
 	
         //simple iteration
         Set<Autor> autores = new HashSet<>();
@@ -124,12 +118,11 @@ public class LibroService {
     public List<Libro> saveCSV(MultipartFile file, Usuario usuario) {
       try {
             BufferedReader br;
-            List<String> result = new ArrayList<>();
             String line;
             InputStream is = file.getInputStream();
             List<Libro> libros = new ArrayList<Libro>();
             br = new BufferedReader(new InputStreamReader(is));
-            int contador = 0;
+
             while ((line = br.readLine()) != null) {
                 String[] elements = line.split(",");
                 String titulo = elements[0];
@@ -236,7 +229,6 @@ public class LibroService {
 
     public void savePDF(MultipartFile file){
         try{
-            String fileType = "pdf";
             String fileName = file.getOriginalFilename();
             String folderPath = "C:/xampp/htdocs/sicei/Buscador/files";
             String filePath = folderPath + "/" + fileName;
