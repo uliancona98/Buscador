@@ -171,6 +171,69 @@ public class LibroService {
       }
     }
 
+    public List<Libro> saveCSV(MultipartFile file, Usuario usuario) {
+      try {
+            BufferedReader br;
+            List<String> result = new ArrayList<>();
+            String line;
+            InputStream is = file.getInputStream();
+            List<Libro> libros = new ArrayList<Libro>();
+            br = new BufferedReader(new InputStreamReader(is));
+            int contador = 0;
+            while ((line = br.readLine()) != null) {
+                String[] elements = line.split(",");
+                String titulo = elements[0];
+                String autoresString = elements[1];
+                String fechaPublicacion = elements[2];
+                String editorial = elements[3];
+                String isbn = elements[4];
+                Libro libroBuscado = libroRepository.findByTitulo(titulo);
+                if(libroBuscado==null){
+                    //libro nuevo
+                    Libro libro = new Libro();
+                    libro.setTitulo(titulo);
+                    libro.setEditorial(editorial);
+                    libro.setAutor(autoresString);
+                    libro.setFechaPublicacion(LocalDate.parse(fechaPublicacion));
+                    libro.setIsbn(isbn);
+                }else{
+                    //libro existente, solo update
+                    libroRepository.findByTitulo(titulo)
+                    .map(libroBuscado -> {
+                        libroBuscado.setTitulo(titulo);
+                        libroBuscado.setEditorial(editorial);
+                        libroBuscado.setAutor(autoresString);
+                        libroBuscado.setFechaPublicacion(LocalDate.parse(fechaPublicacion));
+                        libroBuscado.setIsbn(isbn);
+                        libroRepository.save(libroBuscado);
+                    }).orElseThrow(() -> new NotFoundException("Error Checar"));
+                }
+                /*Autores */
+                String[] autoresArray = autoresString.split("/");
+                Set<Autor> autores = new HashSet<>();
+                for(int i=0;i<autoresArray.length;i++){
+                    Autor autorBuscado=autorRepository.findByNombre(autoresArray[i]);
+                    if(autorBuscado!=null){
+                        autores.add(autorBuscado);
+                    }else{
+                        Autor autor = new Autor();
+                        autor.setNombre(autoresArray[i]);
+                        autor = autorRepository.save(autor); // INSERT
+                        autores.add(autor);
+                    }
+                }
+                libro.setAutores(autores);
+                libro.setUsuario(usuario); //se le envia el usuario
+                libroRepository.save(libro);
+                libros.add(libro);
+            }
+            return libros;
+        //libroRepository.saveAll(libros);
+      } catch (IOException e) {
+        throw new RuntimeException("fail to store csv data: " + e.getMessage());
+      }
+    }
+
     public void savePDF(MultipartFile file){
         try{
             String fileType = "pdf";
