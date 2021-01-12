@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import mx.uady.appbusqueda.model.Autor;
-import mx.uady.appbusqueda.model.AutorLibro;
 import mx.uady.appbusqueda.model.Libro;
 
 import mx.uady.appbusqueda.model.request.AutorRequest;

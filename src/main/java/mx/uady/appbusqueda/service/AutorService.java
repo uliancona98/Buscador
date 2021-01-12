@@ -50,7 +50,7 @@ public class AutorService {
     public List<Libro> getAutorLibros(Integer idAutor){
         Optional<Autor> autor = autorRepository.findById(idAutor);
         List<AutorLibro> autoresLibros = autorLibroRepository.findByAutor(autor.get());
-        List<Libro> libros = new ArrayList();
+        List<Libro> libros = new ArrayList<>();
         for(int i=0;i<autoresLibros.size();i++){
             libros.add(autoresLibros.get(i).getLibro());
         }
