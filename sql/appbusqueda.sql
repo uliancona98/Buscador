@@ -133,7 +133,6 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `usuario`, `password`, `secret`) VALUES
-(1, 'uliancona', '12345', NULL),
 (2, 'uliancona98', '12345678', 'd7d6cd8f-0ba0-4324-88eb-6bb0f43cb2a4'),
 (3, 'shaidbojorquez', '123456789', '150a04ae-a4d6-483c-aa0e-277b832d49d6');
 
