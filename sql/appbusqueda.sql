@@ -1,212 +1,133 @@
--- phpMyAdmin SQL Dump
--- version 5.0.3
--- https://www.phpmyadmin.net/
+CREATE DATABASE  IF NOT EXISTS `appbusqueda` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `appbusqueda`;
+-- MySQL dump 10.13  Distrib 8.0.22, for Linux (x86_64)
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 10-01-2021 a las 06:11:48
--- Versión del servidor: 10.4.14-MariaDB
--- Versión de PHP: 7.3.23
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
+-- Host: localhost    Database: appbusqueda
+-- ------------------------------------------------------
+-- Server version	8.0.23-0ubuntu0.20.10.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Base de datos: `appbusqueda`
+-- Table structure for table `autor`
 --
 
--- --------------------------------------------------------
+DROP TABLE IF EXISTS `autor`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `autor` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(45) NOT NULL,
+  `last_modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Estructura de tabla para la tabla `autores`
+-- Dumping data for table `autor`
 --
 
-CREATE TABLE `autores` (
-  `id` int(11) NOT NULL,
-  `nombre` varchar(45) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+LOCK TABLES `autor` WRITE;
+/*!40000 ALTER TABLE `autor` DISABLE KEYS */;
+INSERT INTO `autor` VALUES (1,'Miguel',NOW()),(5,'Pablo',NOW()),(6,'Francisco',NOW());
+/*!40000 ALTER TABLE `autor` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
--- Volcado de datos para la tabla `autores`
+-- Table structure for table `autor_libro`
 --
 
-INSERT INTO `autores` (`id`, `nombre`) VALUES
-(2, 'Victor Hugo'),
-(3, 'Eduardo Rodriguez'),
-(4, 'Ulises Ancona2'),
-(5, 'Ulises Ancona2'),
-(6, 'Ulises Ancona2'),
-(7, 'Ulises Ancona2'),
-(8, 'Ulises Ancona'),
-(9, 'Ulises Ancona2'),
-(10, 'Vladimir Ancona2'),
-(11, 'Vladimir Ancona2'),
-(12, 'Vladimir Ancona');
-
--- --------------------------------------------------------
+DROP TABLE IF EXISTS `autor_libro`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `autor_libro` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_libro` int NOT NULL,
+  `id_autor` int NOT NULL,
+  `last_modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Estructura de tabla para la tabla `autores_libros`
+-- Dumping data for table `autor_libro`
 --
 
-CREATE TABLE `autores_libros` (
-  `id` int(11) NOT NULL,
-  `id_libro` varchar(45) NOT NULL,
-  `id_autor` varchar(45) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+LOCK TABLES `autor_libro` WRITE;
+/*!40000 ALTER TABLE `autor_libro` DISABLE KEYS */;
+INSERT INTO `autor_libro` VALUES (1,2,1,NOW()),(2,3,1,NOW()),(3,3,5,NOW());
+/*!40000 ALTER TABLE `autor_libro` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
--- Volcado de datos para la tabla `autores_libros`
+-- Table structure for table `libro`
 --
 
-INSERT INTO `autores_libros` (`id`, `id_libro`, `id_autor`) VALUES
-(4, '6', '12'),
-(5, '6', '11');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `libros`
---
-
-CREATE TABLE `libros` (
-  `id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `libro`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `libro` (
+  `id` int NOT NULL AUTO_INCREMENT,
   `titulo` varchar(45) NOT NULL,
-  `autor` varchar(256) NOT NULL,
-  `fecha_publicacion` date NOT NULL,
-  `editorial` varchar(45) DEFAULT NULL,
-  `isbn` varchar(45) DEFAULT NULL,
-  `id_usuario` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `editorial` varchar(45) NOT NULL,
+  `last_modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Volcado de datos para la tabla `libros`
+-- Dumping data for table `libro`
 --
 
-INSERT INTO `libros` (`id`, `titulo`, `autor`, `fecha_publicacion`, `editorial`, `isbn`, `id_usuario`) VALUES
-(1, 'Libro1', '', '2019-01-01', NULL, NULL, 3),
-(2, 'Libro2', '', '2020-01-01', NULL, NULL, 3),
-(3, 'Libro2', '', '2020-01-01', NULL, NULL, 3),
-(4, 'Libro2', '', '2020-01-01', NULL, NULL, 3),
-(5, 'Libro55', '', '2020-01-01', NULL, NULL, 3),
-(6, 'Libro55', '', '2020-01-01', NULL, NULL, 3);
-
--- --------------------------------------------------------
+LOCK TABLES `libro` WRITE;
+/*!40000 ALTER TABLE `libro` DISABLE KEYS */;
+INSERT INTO `libro` VALUES (1,'La Odisea','Greek',NOW()),(2,'La Iliada','Greek',NOW()),(3,'La ALGO','Chalupa',NOW()),(4,'Simpson','Panini',NOW()),(5,'Libro nuevo','laquesea',NOW());
+/*!40000 ALTER TABLE `libro` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
--- Estructura de tabla para la tabla `tokens`
+-- Table structure for table `usuario`
 --
 
-CREATE TABLE `tokens` (
-  `id` int(11) NOT NULL,
-  `token` varchar(1000) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Volcado de datos para la tabla `tokens`
---
-
-INSERT INTO `tokens` (`id`, `token`) VALUES
-(1, 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1bGlhbmNvbmE5OCIsImV4cCI6MTYwOTcxODgyNiwiZXhwaXJhY2lvbiI6MTYwOTcxODgyNjAxMSwiaWF0IjoxNjA5NzAzODI2fQ.q_6yr_QFSRa5qbFoEGwpRkE-46sdeosnFAIDSlAQIevHD19S-5Fnia3ULsApDiEvQSQqO3SB7Kuj5vWZNFMduQ');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `usuarios`
---
-
-CREATE TABLE `usuarios` (
-  `id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `usuario`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `usuario` (
+  `id` int NOT NULL AUTO_INCREMENT,
   `usuario` varchar(45) NOT NULL,
   `password` varchar(45) NOT NULL,
-  `secret` varchar(45) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `secret` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `usuario` (`usuario`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Volcado de datos para la tabla `usuarios`
+-- Dumping data for table `usuario`
 --
 
-INSERT INTO `usuarios` (`id`, `usuario`, `password`, `secret`) VALUES
-(1, 'uliancona', '12345', NULL),
-(2, 'uliancona98', '12345678', 'd7d6cd8f-0ba0-4324-88eb-6bb0f43cb2a4'),
-(3, 'shaidbojorquez', '123456789', '150a04ae-a4d6-483c-aa0e-277b832d49d6');
+LOCK TABLES `usuario` WRITE;
+/*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
+INSERT INTO `usuario` VALUES (1,'carlos','12345','d7d6cd8f-0ba0-4324-88eb-6bb0f43cb2a4'),(2,'ulises','12345','150a04ae-a4d6-483c-aa0e-277b832d49d6'),(4,'shaid','12345','150a04ae-a4d6-483c-aa0e-852b832d49d6');
+/*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
---
--- Índices para tablas volcadas
---
-
---
--- Indices de la tabla `autores`
---
-ALTER TABLE `autores`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `autores_libros`
---
-ALTER TABLE `autores_libros`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `libros`
---
-ALTER TABLE `libros`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `tokens`
---
-ALTER TABLE `tokens`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `token` (`token`);
-
---
--- Indices de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `autores`
---
-ALTER TABLE `autores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
-
---
--- AUTO_INCREMENT de la tabla `autores_libros`
---
-ALTER TABLE `autores_libros`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- AUTO_INCREMENT de la tabla `libros`
---
-ALTER TABLE `libros`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT de la tabla `tokens`
---
-ALTER TABLE `tokens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-COMMIT;
-
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2021-02-01 10:37:50

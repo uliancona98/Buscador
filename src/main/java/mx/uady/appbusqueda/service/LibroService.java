@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedReader;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.io.InputStreamReader;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
@@ -41,8 +43,11 @@ public class LibroService {
     @Autowired
     private AutorLibroRepository autorLibroRepository;
 
-    public static String TYPECSV = "text/csv";
-    public static String TYPEPDF = "application/pdf";
+    public static final String TYPECSV = "text/csv";
+    public static final String TYPEPDF = "application/pdf";
+
+    @Value("${solr.collection.text.pdf.savePath:null}") 
+    private static String folderPath;
 
     public List<Libro> obtenerLibros() {
 
@@ -105,7 +110,7 @@ public class LibroService {
         Optional<Libro> libro = libroRepository.findById(id);
         List<AutorLibro> autoresLibro = autorLibroRepository.findByLibro(libro.get());
 
-        if(autoresLibro.size()==0){
+        if(autoresLibro.isEmpty()){
             libroRepository.deleteById(id);
             return "Libro Borrado";
         } else {
@@ -120,7 +125,7 @@ public class LibroService {
             BufferedReader br;
             String line;
             InputStream is = file.getInputStream();
-            List<Libro> libros = new ArrayList<Libro>();
+            List<Libro> libros = new ArrayList<>();
             br = new BufferedReader(new InputStreamReader(is));
 
             while ((line = br.readLine()) != null) {
@@ -158,40 +163,32 @@ public class LibroService {
                 libros.add(libro);
             }
             return libros;
-        //libroRepository.saveAll(libros);
       } catch (IOException e) {
         throw new RuntimeException("fail to store csv data: " + e.getMessage());
       }
     }
 
     public void savePDF(MultipartFile file){
-        try{
+        if (folderPath == null) {
+            throw new RuntimeException("Ruta para guardar los PDF no especificada en configuracion");
+        }
+
+        try {
             String fileName = file.getOriginalFilename();
-            String folderPath = "C:/xampp/htdocs/sicei/Buscador/files";
-            String filePath = folderPath + "/" + fileName;
+            Path filePath = Paths.get(folderPath, fileName);
             // Copies Spring's multipartfile inputStream to /sismed/temp/exames (absolute path)
-            Files.copy(file.getInputStream(), Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING);
-        }catch(Exception e){
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch(Exception e) {
             throw new RuntimeException("fail to store pdf file: " + e.getMessage());
         }
     }
 
     public boolean hasCSVFormat(MultipartFile file) {
-
-        if (!TYPECSV.equals(file.getContentType())) {
-          return false;
-        }
-    
-        return true;
+        return TYPECSV.equals(file.getContentType());
     }
 
     public boolean hasPdfFormat(MultipartFile file) {
-
-        if (!TYPEPDF.equals(file.getContentType())) {
-          return false;
-        }
-    
-        return true;
+        return TYPEPDF.equals(file.getContentType());
     }
     
 }

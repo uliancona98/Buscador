@@ -8,15 +8,10 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.time.LocalDate;
 import java.util.Set;
-import java.util.HashSet;
-import java.time.format.DateTimeFormatter;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.OneToOne;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.CascadeType;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import javax.persistence.JoinColumn;
 
@@ -59,6 +54,7 @@ public class Libro {
     private Set<Autor> autores;
 
     public Libro() {
+        //empty
     }
 
     public Integer getId() {

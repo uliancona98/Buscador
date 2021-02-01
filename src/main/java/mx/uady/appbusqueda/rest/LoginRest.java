@@ -40,7 +40,7 @@ public class LoginRest {
     
     // POST /login
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody @Valid LoginRequest request){
+    public ResponseEntity<Object> login(@RequestBody @Valid LoginRequest request){
 
         Usuario usuario = usuarioService.getUsuario(request.getUsuario());
 

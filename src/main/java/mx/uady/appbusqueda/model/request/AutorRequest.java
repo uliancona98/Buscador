@@ -1,6 +1,5 @@
 package mx.uady.appbusqueda.model.request;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.validation.constraints.NotEmpty;
@@ -14,6 +13,7 @@ public class AutorRequest{
     private String nombre;
 
     public AutorRequest(){
+        //empty
     }
 
     public void setNombre(String nombre) {
