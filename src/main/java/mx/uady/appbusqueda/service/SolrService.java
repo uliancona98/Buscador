@@ -51,15 +51,6 @@ public class SolrService {
         return getBooksFromIds(bookIds);
     }
 
-    public List<BookText> searchBooksTextCollection(String query) throws SolrServerException, IOException {
-        final SolrQuery solrQuery = new SolrQuery(query);
-        solrQuery.setHighlight(true);
-        solrQuery.addHighlightField(highlightedField);
-        final QueryResponse response = client.query(booksTextCollection, solrQuery);
-
-        return filterHighlightedFields(response.getHighlighting());
-    }
-
     private List<Integer> getBookIds(SolrDocumentList books) {
         List<Integer> ids = new ArrayList<>();
         for (SolrDocument book : books) {
@@ -78,13 +69,21 @@ public class SolrService {
         return books;
     }
 
+    public List<BookText> searchBooksTextCollection(String query) throws SolrServerException, IOException {
+        final SolrQuery solrQuery = new SolrQuery(query);
+        solrQuery.setHighlight(true);
+        solrQuery.addHighlightField(highlightedField);
+        final QueryResponse response = client.query(booksTextCollection, solrQuery);
+
+        return filterHighlightedFields(response.getHighlighting());
+    }
+
     private List<BookText> filterHighlightedFields(Map<String, Map<String, List<String>>> booksText) {
         List<BookText> highlightedBooks = new ArrayList<>();
 
         booksText.forEach((bookId, v) -> {
             List<String> text = v.get(highlightedField);
-            System.out.println(text);
-            if(text == null) {
+            if(text != null) {
                 highlightedBooks.add(new BookText(bookId, text));
             }
         });

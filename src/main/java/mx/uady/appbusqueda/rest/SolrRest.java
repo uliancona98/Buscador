@@ -30,7 +30,7 @@ public class SolrRest {
             books = solrService.searchBooksCollection(query);
             booksText = solrService.searchBooksTextCollection(query);
         } catch (Exception e) {
-            return ResponseEntity.ok(new GenericJsonResponse(e.getMessage()).toString());
+            return ResponseEntity.ok(new GenericJsonResponse(e.getMessage()));
         }
 
         return ResponseEntity.ok(new SearchResponse(books, booksText));

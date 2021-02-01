@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.codec.binary.Base64;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 public class DecodedToken {
 
@@ -13,11 +13,10 @@ public class DecodedToken {
   private String iat;
   private String expiracion;
 
-  public static DecodedToken getDecoded(String encodedToken) throws UnsupportedEncodingException {
+  public static DecodedToken getDecoded(String encodedToken) {
       String[] pieces = encodedToken.split("\\.");
       String b64payload = pieces[1];
-      String jsonString = new String(Base64.decodeBase64(b64payload), "UTF-8");
-      System.out.println("PAYLOAD:"+ jsonString);
+      String jsonString = new String(Base64.decodeBase64(b64payload), StandardCharsets.UTF_8);
 
       return new Gson().fromJson(jsonString, DecodedToken.class);
   }
