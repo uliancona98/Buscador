@@ -44,7 +44,7 @@ public class AutorService {
 
     public Autor getAutor(Integer idAutor) {
         return autorRepository.findById(idAutor)
-            .orElseThrow(() -> new NotFoundException("No existe el autor"));
+            .orElseThrow(() -> new NotFoundException("autor"));
     }
 
     public List<Libro> getAutorLibros(Integer idAutor){
@@ -63,7 +63,7 @@ public class AutorService {
             autor.setNombre(request.getNombre());
             return autorRepository.save(autor);
         })
-        .orElseThrow(() -> new NotFoundException("No existe ese autor"));
+        .orElseThrow(() -> new NotFoundException("autor"));
     }
 
     public String borrarAutor(Integer id) {

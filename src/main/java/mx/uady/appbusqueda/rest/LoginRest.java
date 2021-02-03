@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.http.HttpStatus;
+import java.util.List;
+import java.util.Collections;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -41,18 +43,26 @@ public class LoginRest {
     // POST /login
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginRequest request){
-
+        System.out.println(request.getPassword()+request.getUsuario());
         Usuario usuario = usuarioService.getUsuario(request.getUsuario());
 
         if (usuario == null) {
+            //String errMessage = "El usuario o la contrasena son incorrectos";
             String errMessage = "El usuario o la contrasena son incorrectos";
-            return ResponseEntity.ok(errMessage);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("message", errMessage));
+            //return ResponseEntity.ok(errMessage);
+        }else{
+            if(usuario.getUsuario().equals(request.getUsuario()) && usuario.getPassword().equals(request.getPassword())){
+                String token = jwtTokenUtil.generateToken(usuario);
+                return ResponseEntity.ok(new JwtResponse(token));
+            }
+
+            String errMessage = "El usuario o la contrasena son incorrectos";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("message", errMessage));
         }
 
-        String token = jwtTokenUtil.generateToken(usuario);
-
-        return ResponseEntity.ok(new JwtResponse(token));
     }
+
 
     @GetMapping("/quienSoy")
     //devuelve al usuario logeado

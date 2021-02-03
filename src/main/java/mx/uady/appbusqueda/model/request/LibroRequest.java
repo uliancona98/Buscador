@@ -16,14 +16,17 @@ public class LibroRequest{
  
     @PastOrPresent(message = "La fecha no cumple con el formato correcto")
     @DateTimeFormat(pattern="yyyy-MM-dd")
-    @NotNull(message = "Por favor, tiene que ingresar un valor")
+    //@NotNull(message = "Por favor, tiene que ingresar un valor")
     private LocalDate fechaPublicacion;
 
 
     private String editorial;
-    
-    private String isbn;
 
+    private String url;
+
+    private String isbn;
+    
+    @NotNull
     private String autor;
 
     private Set<AutorRequest> autores = new HashSet<>();
@@ -72,6 +75,13 @@ public class LibroRequest{
 
     public String getIsbn() {
         return this.isbn;
+    }
+    public void setURL(String url) {
+        this.url = url;
+    }
+
+    public String getURL() {
+        return this.url;
     }
 
     public void setIsbn(String isbn) {

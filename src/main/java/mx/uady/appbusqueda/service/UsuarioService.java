@@ -49,7 +49,8 @@ public class UsuarioService {
     }
 
     public Usuario getUsuario(String usuario) {
-        return usuarioRepository.findByUsuario(usuario);
+        Usuario user = usuarioRepository.findByUsuario(usuario);
+        return user;
     }
 
     public Usuario editarUsuario(Integer id, UsuarioRequest request) {
@@ -58,6 +59,6 @@ public class UsuarioService {
             usuario.setUsuario(request.getUsuario());
             return usuarioRepository.save(usuario);
         })
-        .orElseThrow(() -> new NotFoundException("No existe ese usuario"));
+        .orElseThrow(() -> new NotFoundException("usuario"));
     }
 }

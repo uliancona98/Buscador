@@ -88,7 +88,7 @@ public class AutorRest {
 
         return ResponseEntity
             .ok()
-            .body(Collections.singletonMap("Respuesta", response));
+            .body(Collections.singletonMap("message", response));
     }
 
 

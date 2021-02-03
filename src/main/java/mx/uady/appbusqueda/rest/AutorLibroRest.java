@@ -5,6 +5,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import javax.validation.Valid;
+import org.springframework.http.HttpStatus;
+import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import mx.uady.appbusqueda.model.Libro;
 
 import mx.uady.appbusqueda.model.AutorLibro;
 import mx.uady.appbusqueda.service.AutorLibroService;
@@ -35,14 +38,20 @@ public class AutorLibroRest {
     }
 
     @PostMapping("/autoresLibros")
-    public ResponseEntity<AutorLibro> postAutorLibro(@RequestBody @Valid AutorLibroRequest request) throws URISyntaxException {
+    public ResponseEntity<?> postAutorLibro(@RequestBody @Valid AutorLibroRequest request) throws URISyntaxException {
         
-        AutorLibro autorLibro = autorLibroService.crearAutorLibro(request);
+        Libro libro = autorLibroService.crearAutorLibro(request);
         // 201 Created
         // Header: Location
-        return ResponseEntity
-            .created(new URI("/autoresLibros/" + autorLibro.getId()))
-            .body(autorLibro);
+        if(libro!=null){
+            return ResponseEntity
+            .created(new URI("/autoresLibros/" + libro.getId()))
+            .body(libro);
+        }else{
+            return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("message", "Ya existe esta relación"));
+        }
+
     }
 
 

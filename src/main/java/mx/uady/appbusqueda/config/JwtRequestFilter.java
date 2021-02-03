@@ -64,7 +64,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 			try {
 				token = DecodedToken.getDecoded(jwtToken);
-				//signature = DecodedToken.getSignature(jwtToken);
                 username = token.getSub();
 			} catch (IllegalArgumentException e) {
 				System.out.println("Unable to get JWT Token");
@@ -73,7 +72,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 				System.out.println("JWT Token has expired");
 			}
 
-			// checar blacklist
 			TokenBlacklist existingToken = tokenRepository.findByToken(requestTokenHeader);
 			logger.warn(existingToken);
 			if (existingToken != null) {
