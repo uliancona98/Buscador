@@ -61,7 +61,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 				logger.error(e.getMessage());
 			}
 
-			// checar blacklist
 			TokenBlacklist existingToken = tokenRepository.findByToken(requestTokenHeader);
 			
 			if (existingToken != null) {

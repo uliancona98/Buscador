@@ -3,7 +3,6 @@ package mx.uady.appbusqueda.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.codec.binary.Base64;
-
 import java.nio.charset.StandardCharsets;
 
 public class DecodedToken {
@@ -14,12 +13,13 @@ public class DecodedToken {
   private String expiracion;
 
   public static DecodedToken getDecoded(String encodedToken) {
-      String[] pieces = encodedToken.split("\\.");
-      String b64payload = pieces[1];
-      String jsonString = new String(Base64.decodeBase64(b64payload), StandardCharsets.UTF_8);
 
-      return new Gson().fromJson(jsonString, DecodedToken.class);
-  }
+    String[] pieces = encodedToken.split("\\.");
+    String b64payload = pieces[1];
+    String jsonString = new String(Base64.decodeBase64(b64payload), StandardCharsets.UTF_8);
+
+    return new Gson().fromJson(jsonString, DecodedToken.class);
+}
 
   public String toString() {
       Gson gson = new GsonBuilder().setPrettyPrinting().create();

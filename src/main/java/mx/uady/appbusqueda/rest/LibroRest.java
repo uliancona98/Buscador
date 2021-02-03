@@ -4,6 +4,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
+import java.io.File;   
+import java.io.IOException;  
 
 import javax.validation.Valid;
 import java.util.Collections;
@@ -21,11 +23,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.apache.pdfbox.pdmodel.PDDocument;   
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;  
 import mx.uady.appbusqueda.model.Libro;
 import mx.uady.appbusqueda.model.Usuario;
 import mx.uady.appbusqueda.model.request.LibroRequest;
-import mx.uady.appbusqueda.model.ResponseMessage;
+import mx.uady.appbusqueda.model.response.ResponseMessage;
 import mx.uady.appbusqueda.service.LibroService;
 
 @RestController
@@ -55,35 +58,39 @@ public class LibroRest {
             .created(new URI("/libros/" + libro.getId()))
             .body(libro);
     }
-/*Upload csv or pdf*/
-    @PostMapping("/upload") 
-    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
+    /*Upload csv or pdf*/
+    @PostMapping("/upload")
+    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
       String message = "";
-  
+      Usuario usuario = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
       if (libroService.hasCSVFormat(file)) {
         try {
-          Usuario usuario = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
           // InputStream inputStream = file.getInputStream();
 
           List<Libro> libros = libroService.saveCSV(file, usuario);
           message = "Uploaded the file successfully: " + file.getOriginalFilename();
-          return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(libros));
+          return ResponseEntity.status(HttpStatus.OK).body(libros);
         } catch (Exception e) {
           message = "Could not upload the file: " + file.getOriginalFilename() + "!";
           return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
         }
       }else if(libroService.hasPdfFormat(file)){
         //guarda el pdf en una carpeta
+        System.out.println("RIN ABOUT US");
+
         try {
-          libroService.savePDF(file);
-          message = "Saved the file successfully: " + file.getOriginalFilename();
-          return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+          Libro libro = libroService.savePDF(file, usuario);
+          if(libro!=null){
+            System.out.println("RIN ABOUT US");
+
+            //message = "Saved the file successfully: " + file.getOriginalFilename();
+            //message = libro;
+            return ResponseEntity.status(HttpStatus.OK).body(libro);
+          }
         } catch (Exception e) {
           message = "Could not save the file: " + file.getOriginalFilename() + "!";
           return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
         }
-      //}
       }
       message = "Please upload a csv or pdf file!";
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
@@ -118,7 +125,7 @@ public class LibroRest {
 
         return ResponseEntity
             .ok()
-            .body(Collections.singletonMap("Respuesta", response));
+            .body(Collections.singletonMap("message", response));
     }
 
 

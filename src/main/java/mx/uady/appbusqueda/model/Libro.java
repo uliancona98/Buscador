@@ -34,6 +34,10 @@ public class Libro {
 
     @Column
     private String autor;
+
+    @Column
+    private String url;
+
     @Column
     private String isbn;
 
@@ -91,7 +95,13 @@ public class Libro {
     public String getAutor() {
         return this.autor;
     }
+    public void setURL(String url) {
+        this.url = url;
+    }
 
+    public String getURL() {
+        return this.url;
+    }
     public void setTitulo(String titulo) {
         this.titulo = titulo;
     }

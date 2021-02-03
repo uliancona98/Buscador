@@ -1,10 +1,11 @@
 package mx.uady.appbusqueda.service;
+import java.util.UUID;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.time.LocalDate;
-
+import java.io.File;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-
+import org.apache.pdfbox.pdmodel.PDDocument;   
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import mx.uady.appbusqueda.exception.NotFoundException;
 import java.util.Set;
 import java.io.IOException;
@@ -42,7 +44,7 @@ public class LibroService {
     private AutorRepository autorRepository;
     @Autowired
     private AutorLibroRepository autorLibroRepository;
-
+  
     public static final String TYPECSV = "text/csv";
     public static final String TYPEPDF = "application/pdf";
 
@@ -90,7 +92,7 @@ public class LibroService {
 
     public Libro getLibro(Integer id) {
         return libroRepository.findById(id)
-            .orElseThrow(() -> new NotFoundException("No existe el libro"));
+            .orElseThrow(() -> new NotFoundException("libro"));
     }
 
     public Libro editarLibro(Integer id, LibroRequest request) {
@@ -103,8 +105,9 @@ public class LibroService {
             libro.setTitulo(request.getTitulo());
             return libroRepository.save(libro);
         })
-        .orElseThrow(() -> new NotFoundException("No existe ese libro"));
+        .orElseThrow(() -> new NotFoundException("libro"));
     }
+
 
     public String borrarLibro(Integer id) {
         Optional<Libro> libro = libroRepository.findById(id);
@@ -118,8 +121,6 @@ public class LibroService {
         }
     }
 
-
-  
     public List<Libro> saveCSV(MultipartFile file, Usuario usuario) {
       try {
             BufferedReader br;
@@ -164,22 +165,57 @@ public class LibroService {
             }
             return libros;
       } catch (IOException e) {
-        throw new RuntimeException("fail to store csv data: " + e.getMessage());
+        throw new RuntimeException("Error al guardar datos del CSV: " + e.getMessage());
       }
     }
 
-    public void savePDF(MultipartFile file){
+    public Libro savePDF(MultipartFile file,Usuario usuario){
+        /*System.out.println(folderPath);  
         if (folderPath == null) {
+            
             throw new RuntimeException("Ruta para guardar los PDF no especificada en configuracion");
-        }
+        }*/
+        try{
+            String folderPathFile = "C:/xampp/htdocs/sicei/Buscador/files";
 
-        try {
+            //Primero lo guardo
+
             String fileName = file.getOriginalFilename();
-            Path filePath = Paths.get(folderPath, fileName);
+            String uuid = UUID.randomUUID().toString();
+
+            String filePath = folderPathFile + "/" + uuid+".pdf";
+            System.out.println(filePath);
+            Files.copy(file.getInputStream(), Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING);
+
+
+            //Loading an existing document   
+            File fileType = new File(filePath);  
+            PDDocument doc = PDDocument.load(fileType);  
+        
+            //Getting the PDDocumentInformation object  
+            PDDocumentInformation pdd = doc.getDocumentInformation();  
+
+            Libro libro = new Libro();
+            if(pdd.getTitle()!=null){
+                libro.setTitulo(pdd.getTitle());
+            }else{
+                libro.setTitulo("");
+            }
+            if(pdd.getTitle()!=null){
+                libro.setAutor(pdd.getAuthor());
+            }else{
+                libro.setAutor("");
+            }
+            libro.setURL(filePath);
+            libro.setUsuario(usuario); 
+            libroRepository.save(libro);
+            //Retrieving the info of a PDF document
+            System.out.println("Author of the PDF document is :"+ pdd.getAuthor());  
+            doc.close();  
             // Copies Spring's multipartfile inputStream to /sismed/temp/exames (absolute path)
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch(Exception e) {
-            throw new RuntimeException("fail to store pdf file: " + e.getMessage());
+            return libro;
+        }catch(Exception e){
+            throw new RuntimeException("Error al guardar el libro o al leerlo: " + e.getMessage());
         }
     }
 
