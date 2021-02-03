@@ -52,15 +52,7 @@ public class LibroRest {
     @Autowired
     private LibroService libroService;
 
-    private Sort.Direction getSortDirection(String direction) {
-      if (direction.equals("asc")) {
-        return Sort.Direction.ASC;
-      } else if (direction.equals("desc")) {
-        return Sort.Direction.DESC;
-      }
-  
-      return Sort.Direction.ASC;
-    }
+
     // GET /api/libros
     @GetMapping("/libros")
     public ResponseEntity<List<Libro>> getLibros() {
@@ -137,53 +129,60 @@ public class LibroRest {
             .body(Collections.singletonMap("message", response));
     }
 
-
+    private Sort.Direction getSortDirection(String direction) {
+      if (direction.equals("asc")) {
+        return Sort.Direction.ASC;
+      } else if (direction.equals("desc")) {
+        return Sort.Direction.DESC;
+      }
+  
+      return Sort.Direction.ASC;
+    }
     @GetMapping("/booksPage")
     public ResponseEntity<Map<String, Object>> getAllBooksPage(
       @RequestParam(required = false) String titulo,
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "3") int size,
-      @RequestParam(defaultValue = "idLibro,desc") String[] sort) {
+      @RequestParam(defaultValue = "id,desc") String[] sort) {
+        try {
+          List<Order> orders = new ArrayList<Order>();
+          System.out.println("ja");
+          if (sort[0].contains(",")) {
+            // will sort more than 2 fields
+            // sortOrder="field, direction"
+            for (String sortOrder : sort) {
+              String[] _sort = sortOrder.split(",");
+              orders.add(new Order("asc"));
+            }
+          } else {
+            System.out.println("ja");
 
-    try {
-      List<Order> orders = new ArrayList<Order>();
-System.out.println("ja");
-      if (sort[0].contains(",")) {
-        // will sort more than 2 fields
-        // sortOrder="field, direction"
-        for (String sortOrder : sort) {
-          String[] _sort = sortOrder.split(",");
-          orders.add(new Order(getSortDirection(_sort[1]), _sort[0]));
+            // sort=[field, direction]
+            orders.add(new Order(getSortDirection(sort[1]), sort[0]));
+          }
+
+        List<Libro> libros = new ArrayList<Libro>();
+        Pageable pagingSort = PageRequest.of(page, size, Sort.by(orders));
+
+        Page<Libro> pageTuts;
+        if (titulo == null){
+          pageTuts = libroService.getRepository().findAll(pagingSort);
+        }else{
+          pageTuts = libroService.getRepository().findByTitulo(titulo, pagingSort);
         }
-      } else {
-        System.out.println("ja");
+          libros = pageTuts.getContent();
+        
+        if (libros.isEmpty()) {
+          return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
 
-        // sort=[field, direction]
-        orders.add(new Order(getSortDirection(sort[1]), sort[0]));
-      }
+        Map<String, Object> response = new HashMap<>();
+        response.put("libros", libros);
+        response.put("currentPage", pageTuts.getNumber());
+        response.put("totalItems", pageTuts.getTotalElements());
+        response.put("totalPages", pageTuts.getTotalPages());
 
-      List<Libro> libros = new ArrayList<Libro>();
-      Pageable pagingSort = PageRequest.of(page, size, Sort.by(orders));
-
-      Page<Libro> pageTuts;
-      if (titulo == null){
-        pageTuts = libroService.getRepository().findAll(pagingSort);
-      }else{
-        pageTuts = libroService.getRepository().findByTitulo(titulo, pagingSort);
-      }
-        libros = pageTuts.getContent();
-      
-      if (libros.isEmpty()) {
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-      }
-
-      Map<String, Object> response = new HashMap<>();
-      response.put("libros", libros);
-      response.put("currentPage", pageTuts.getNumber());
-      response.put("totalItems", pageTuts.getTotalElements());
-      response.put("totalPages", pageTuts.getTotalPages());
-
-      return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     } catch (Exception e) {
       return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
