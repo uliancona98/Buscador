@@ -57,10 +57,6 @@ public class Autor {
         this.id = id;
     }
 
-    public String  getFechaUltimaModificacion() {
-        return this.last_modified;
-    }
-
     public void setFechaUltimaModificacion() {
         Date dt = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

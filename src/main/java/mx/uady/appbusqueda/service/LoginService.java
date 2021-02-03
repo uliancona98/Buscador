@@ -30,13 +30,13 @@ public class LoginService {
         if (!usuario.getPassword().equals(request.getPassword())) {
             return null;
         }
-        usuarioRepository.save(usuario);
+        usuarioRepository.saveAndFlush(usuario);
         String jwt = jwtTokenUtil.generateToken(usuario);
         return jwt;
     }
     
      public void logout(String auth) {
         TokenBlacklist token = new TokenBlacklist(auth);
-        tokenRepository.save(token);
+        tokenRepository.saveAndFlush(token);
     }
 }

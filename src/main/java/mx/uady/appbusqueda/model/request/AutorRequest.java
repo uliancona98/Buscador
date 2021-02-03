@@ -8,11 +8,11 @@ import javax.validation.constraints.NotEmpty;
 public class AutorRequest{
 
 
-    @NotNull
     @Size(min = 3, max = 255)
     @NotEmpty
     private String nombre;
 
+    private Integer id;
     public AutorRequest(){
     }
 
@@ -22,5 +22,13 @@ public class AutorRequest{
 
     public String getNombre() {
         return this.nombre;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getId() {
+        return this.id;
     }
 }

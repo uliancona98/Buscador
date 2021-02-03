@@ -29,9 +29,9 @@ public class UsuarioService {
 
 
     public Usuario getUsuario(Integer id) {
-        Optional<Usuario> opt = usuarioRepository.findById(id);
-        if (opt.isPresent()) {
-            return opt.get();
+        Usuario us = usuarioRepository.getOne(id);
+        if (us != null) {
+            return us;
         }
         throw new NotFoundException();
     }
@@ -45,7 +45,7 @@ public class UsuarioService {
         usuario.setPassword(request.getPassword());
         usuario.setUsuario(request.getUsuario());
 
-        return usuarioRepository.save(usuario);
+        return usuarioRepository.saveAndFlush(usuario);
     }
 
     public Usuario getUsuario(String usuario) {
@@ -54,11 +54,11 @@ public class UsuarioService {
     }
 
     public Usuario editarUsuario(Integer id, UsuarioRequest request) {
-        return usuarioRepository.findById(id)
-        .map(usuario -> {
+        Usuario usuario =  usuarioRepository.getOne(id);
+        if(usuario!=null){
             usuario.setUsuario(request.getUsuario());
-            return usuarioRepository.save(usuario);
-        })
-        .orElseThrow(() -> new NotFoundException("usuario"));
+            return usuarioRepository.saveAndFlush(usuario);
+        }
+        throw new NotFoundException("usuario");
     }
 }

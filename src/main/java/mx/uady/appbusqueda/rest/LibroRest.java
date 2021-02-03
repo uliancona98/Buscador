@@ -6,6 +6,15 @@ import java.util.List;
 import java.util.Map;
 import java.io.File;   
 import java.io.IOException;  
+import java.util.ArrayList;
+import org.springframework.data.repository.CrudRepository;
+import java.util.HashMap;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.validation.Valid;
 import java.util.Collections;
@@ -30,6 +39,11 @@ import mx.uady.appbusqueda.model.Usuario;
 import mx.uady.appbusqueda.model.request.LibroRequest;
 import mx.uady.appbusqueda.model.response.ResponseMessage;
 import mx.uady.appbusqueda.service.LibroService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 
 @RestController
 @RequestMapping("/api")
@@ -38,27 +52,33 @@ public class LibroRest {
     @Autowired
     private LibroService libroService;
 
+    private Sort.Direction getSortDirection(String direction) {
+      if (direction.equals("asc")) {
+        return Sort.Direction.ASC;
+      } else if (direction.equals("desc")) {
+        return Sort.Direction.DESC;
+      }
+  
+      return Sort.Direction.ASC;
+    }
     // GET /api/libros
     @GetMapping("/libros")
     public ResponseEntity<List<Libro>> getLibros() {
-        // ResponseEntity es una abstraccion de una respuesta HTTP, con body y headers
         return ResponseEntity.ok().body(libroService.obtenerLibros());
     }
 
     // POST /api/libros
     @PostMapping("/libros")
     public ResponseEntity<Libro> postLibros(@RequestBody @Valid LibroRequest request) throws URISyntaxException {
-        // RequestBody le indica a Java que estamos esperando un request que cumpla con los campos del Objeto LibroRequest
         Usuario usuario = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Libro libro = libroService.crearLibro(request, usuario);
-
-        // 201 Created
-        // Header: Location
         return ResponseEntity
             .created(new URI("/libros/" + libro.getId()))
             .body(libro);
     }
-    /*Upload csv or pdf*/
+
+
+
     @PostMapping("/upload")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
       String message = "";
@@ -76,15 +96,9 @@ public class LibroRest {
         }
       }else if(libroService.hasPdfFormat(file)){
         //guarda el pdf en una carpeta
-        System.out.println("RIN ABOUT US");
-
         try {
           Libro libro = libroService.savePDF(file, usuario);
           if(libro!=null){
-            System.out.println("RIN ABOUT US");
-
-            //message = "Saved the file successfully: " + file.getOriginalFilename();
-            //message = libro;
             return ResponseEntity.status(HttpStatus.OK).body(libro);
           }
         } catch (Exception e) {
@@ -96,16 +110,12 @@ public class LibroRest {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
     }
 
-
-    // GET /api/libros/3 -> 200
-    // Validar que exista, si no existe Lanzar un RuntimeException
     @GetMapping("/libros/{id}")
     public ResponseEntity<Libro> getLibro(@PathVariable Integer id){
 
         return ResponseEntity.ok().body(libroService.getLibro(id));
     }
 
-    // Validar que exista, si no existe Lanzar un RuntimeException
     @PutMapping("/libros/{id}")
     public ResponseEntity<Libro> putLibros(@PathVariable Integer id, @RequestBody LibroRequest request)
             throws URISyntaxException {
@@ -117,7 +127,6 @@ public class LibroRest {
             .body(libro);
     }
 
-    // Validar que exista, si no existe Lanzar un RuntimeException
     @DeleteMapping("/libros/{id}")
     public ResponseEntity<Map<String, String>> deleteLibro(@PathVariable Integer id){
 
@@ -128,5 +137,56 @@ public class LibroRest {
             .body(Collections.singletonMap("message", response));
     }
 
+
+    @GetMapping("/booksPage")
+    public ResponseEntity<Map<String, Object>> getAllBooksPage(
+      @RequestParam(required = false) String titulo,
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "3") int size,
+      @RequestParam(defaultValue = "idLibro,desc") String[] sort) {
+
+    try {
+      List<Order> orders = new ArrayList<Order>();
+System.out.println("ja");
+      if (sort[0].contains(",")) {
+        // will sort more than 2 fields
+        // sortOrder="field, direction"
+        for (String sortOrder : sort) {
+          String[] _sort = sortOrder.split(",");
+          orders.add(new Order(getSortDirection(_sort[1]), _sort[0]));
+        }
+      } else {
+        System.out.println("ja");
+
+        // sort=[field, direction]
+        orders.add(new Order(getSortDirection(sort[1]), sort[0]));
+      }
+
+      List<Libro> libros = new ArrayList<Libro>();
+      Pageable pagingSort = PageRequest.of(page, size, Sort.by(orders));
+
+      Page<Libro> pageTuts;
+      if (titulo == null){
+        pageTuts = libroService.getRepository().findAll(pagingSort);
+      }else{
+        pageTuts = libroService.getRepository().findByTitulo(titulo, pagingSort);
+      }
+        libros = pageTuts.getContent();
+      
+      if (libros.isEmpty()) {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+      }
+
+      Map<String, Object> response = new HashMap<>();
+      response.put("libros", libros);
+      response.put("currentPage", pageTuts.getNumber());
+      response.put("totalItems", pageTuts.getTotalElements());
+      response.put("totalPages", pageTuts.getTotalPages());
+
+      return new ResponseEntity<>(response, HttpStatus.OK);
+    } catch (Exception e) {
+      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 
 }

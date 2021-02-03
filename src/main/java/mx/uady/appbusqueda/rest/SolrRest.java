@@ -56,14 +56,16 @@ public class SolrRest {
     }
 
     @GetMapping("/corrections")
-    public ResponseEntity<?> correction(@RequestParam String query) {
+    public ResponseEntity<Object> correction(@RequestParam String query) {
         
-        List<String,String> booksCorrections;
-        List<String,String> textCorrections;
+        List<SuggestResponse> booksCorrections;
+        List<SuggestResponse> textCorrections;
 
         try {
             booksCorrections = solrService.getCorrectionsBooksCollection(query);
+            //booksCorrections = solrService.getCorrectionsTextCollection(query);
             textCorrections = solrService.getCorrectionsTextCollection(query);
+
         } catch (Exception e) {
             return ResponseEntity.ok(new GenericJsonResponse(e.getMessage()));
         }

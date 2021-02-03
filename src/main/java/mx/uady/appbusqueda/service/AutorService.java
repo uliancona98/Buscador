@@ -39,18 +39,21 @@ public class AutorService {
     public Autor crearAutor(AutorRequest request) {
         Autor autor = new Autor();
         autor.setNombre(request.getNombre());
-        autor = autorRepository.save(autor); // INSERT
+        autor = autorRepository.saveAndFlush(autor); // INSERT
         return autor;
     }
 
     public Autor getAutor(Integer idAutor) {
-        return autorRepository.findById(idAutor)
-            .orElseThrow(() -> new NotFoundException("autor"));
+       Autor autor =  autorRepository.getOne(idAutor);
+        if (autor == null) {
+            throw new NotFoundException("autor");
+        }
+        return autor;
     }
 
     public List<Libro> getAutorLibros(Integer idAutor){
-        Optional<Autor> autor = autorRepository.findById(idAutor);
-        List<AutorLibro> autoresLibros = autorLibroRepository.findByAutor(autor.get());
+        Autor autor = autorRepository.getOne(idAutor);
+        List<AutorLibro> autoresLibros = autorLibroRepository.findByAutor(autor);
         List<Libro> libros = new ArrayList<>();
         for(int i=0;i<autoresLibros.size();i++){
             libros.add(autoresLibros.get(i).getLibro());
@@ -59,17 +62,18 @@ public class AutorService {
     }
 
     public Autor editarAutor(Integer idAutor, AutorRequest request) {
-        return autorRepository.findById(idAutor)
-        .map(autor -> {
+
+        Autor autor =  autorRepository.getOne(idAutor);
+        if(autor!=null){
             autor.setNombre(request.getNombre());
-            return autorRepository.save(autor);
-        })
-        .orElseThrow(() -> new NotFoundException("autor"));
+            return autorRepository.saveAndFlush(autor);
+        }
+        throw new NotFoundException("autor");
     }
 
     public String borrarAutor(Integer id) {
-        Optional<Autor> autor = autorRepository.findById(id);
-        List<AutorLibro> autoresLibro = autorLibroRepository.findByAutor(autor.get());
+        Autor autor = autorRepository.getOne(id);
+        List<AutorLibro> autoresLibro = autorLibroRepository.findByAutor(autor);
         if(autoresLibro.size()==0){
             autorRepository.deleteById(id);
             return "Autor Borrado";

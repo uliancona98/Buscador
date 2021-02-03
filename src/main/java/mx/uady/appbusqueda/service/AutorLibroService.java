@@ -36,74 +36,54 @@ public class AutorLibroService {
     }
 
     public Libro crearAutorLibro(AutorLibroRequest request) {
-        Optional <Autor> autor = autorRepository.findById(request.getIdAutor());
-        Optional <Libro> libro = libroRepository.findById(request.getIdLibro());
+        Autor autor = autorRepository.getOne(request.getIdAutor());
+        Libro libro = libroRepository.getOne(request.getIdLibro());
         Integer idLibro = request.getIdLibro();
         Integer idAutor = request.getIdAutor();
-        //AutorLibro autorLibroExistente = autorLibroRepository.findByIdLibroAndIdAutor(idLibro, idAutor).get(0);
 
 
-        if (!autor.isPresent()) {
+        if (autor == null) {
             throw new NotFoundException("autor");
-        }else if(!libro.isPresent()){
+        }else if(libro == null){
             throw new NotFoundException("libro");
         }else{
-            Libro libroB = libro.get();
-            Autor autorB = autor.get();
+            Libro libroB = libro;
+            Autor autorB = autor;
             libroB.getAutores().add(autorB);
-            libroRepository.save(libroB);
+            libroRepository.saveAndFlush(libroB);
             return libroB;
         }
     }
 
     public AutorLibro getAutorLibro(Integer idAutor, Integer idLibro) {
+        Autor autor = autorRepository.getOne(idAutor);
+        Libro libro = libroRepository.getOne(idLibro);
 
-        autorRepository.findById(idAutor)
-            .orElseThrow(() -> new NotFoundException("autor"));
 
-        libroRepository.findById(idLibro)
-            .orElseThrow(() -> new NotFoundException("libro"));
-            
-        Optional<Autor> autor = autorRepository.findById(idAutor);
-        Optional<Libro> libro = libroRepository.findById(idLibro);
-        List<AutorLibro> autorLibroExistenteLista = autorLibroRepository.findByLibroAndAutor(libro.get(), autor.get());
+        if (autor == null) {
+            throw new NotFoundException("autor");
+        }else if(libro == null){
+            throw new NotFoundException("libro");
+        }
+
+        List<AutorLibro> autorLibroExistenteLista = autorLibroRepository.findByLibroAndAutor(libro, autor);
         if(autorLibroExistenteLista.size()==1){
             return autorLibroExistenteLista.get(0);
-        }else{
-            throw new NotFoundException("autor y libro solicitado");
         }
+        throw new NotFoundException("autor y libro solicitado");
+        
     }
 
- /*   public AutorLibro editarAutorLibro(Integer idLibro, Integer idAutor, AutorLibroRequest request) {
-
-        autorRepository.findById(idAutor)
-            .orElseThrow(() -> new NotFoundException("autor"));
-
-        libroRepository.findById(idLibro)
-            .orElseThrow(() -> new NotFoundException("libro"));
-
-        Optional<Autor> autor = autorRepository.findById(idAutor);
-        Optional<Libro> libro = libroRepository.findById(idLibro);
-
-        List<AutorLibro> autorLibroExistenteLista = autorLibroRepository.findByLibroAndAutor(libro.get(), autor.get());
-
-        if(autorLibroExistenteLista.size()==1){//check
-            return autorLibroRepository.save(autorLibroExistenteLista.get(0));
-        }
-        throw new NotFoundException("autor y libro solicitada");
-    }
-*/
     public void borrarAutorLibro(Integer idLibro, Integer idAutor) {
 
-        libroRepository.findById(idLibro)
-            .orElseThrow(() -> new NotFoundException("libro"));
-
-        autorRepository.findById(idAutor)
-            .orElseThrow(() -> new NotFoundException("autor"));
-
-        Optional<Autor> autor = autorRepository.findById(idAutor);
-        Optional<Libro> libro = libroRepository.findById(idLibro);
-        List<AutorLibro> autorLibroExistenteLista = autorLibroRepository.findByLibroAndAutor(libro.get(), autor.get());
+        Autor autor = autorRepository.getOne(idAutor);
+        Libro libro = libroRepository.getOne(idLibro);
+        if (autor == null) {
+            throw new NotFoundException("autor");
+        }else if(libro == null){
+            throw new NotFoundException("libro");
+        }
+        List<AutorLibro> autorLibroExistenteLista = autorLibroRepository.findByLibroAndAutor(libro, autor);
         if(autorLibroExistenteLista.size()==1){
             autorLibroRepository.deleteById(autorLibroExistenteLista.get(0).getId());
         }else{

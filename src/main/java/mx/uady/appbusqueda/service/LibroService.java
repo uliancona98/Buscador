@@ -59,8 +59,6 @@ public class LibroService {
     }
 
     public Libro crearLibro(LibroRequest request, Usuario usuario) {
-
-
         Libro libro = new Libro();
         libro.setEditorial(request.getEditorial());
         libro.setFechaPublicacion(request.getFechaPublicacion());
@@ -76,45 +74,52 @@ public class LibroService {
         Set<Autor> autores = new HashSet<>();
         while(iterator.hasNext()){
             AutorRequest autorRequest = (AutorRequest)iterator.next();
-            Autor autorBuscado=autorRepository.findByNombre(autorRequest.getNombre());
+            Autor autorBuscado=autorRepository.getOne(autorRequest.getId());
             if(autorBuscado!=null){
                 autores.add(autorBuscado);
             }else{
                 Autor autor = new Autor();
                 autor.setNombre(autorRequest.getNombre());
-                autor = autorRepository.save(autor); // INSERT
+                autor = autorRepository.saveAndFlush(autor); 
                 autores.add(autor);
-                autor = autorRepository.save(autor); // INSERT
+                autor = autorRepository.saveAndFlush(autor);
             }
         }
         libro.setAutores(autores);
-        libro = libroRepository.save(libro); // INSERT
+        libro = libroRepository.saveAndFlush(libro); // INSERT
         return libro;
     }
 
     public Libro getLibro(Integer id) {
-        return libroRepository.findById(id)
-            .orElseThrow(() -> new NotFoundException("libro"));
+        Libro libro = libroRepository.getOne(id);
+        if (libro != null) {
+            return libro;
+        }
+        throw new NotFoundException("libro");
     }
 
     public Libro editarLibro(Integer id, LibroRequest request) {
-        return libroRepository.findById(id)
-        .map(libro -> {
+        Libro libro = libroRepository.getOne(id);
+        if (libro != null) {
             libro.setEditorial(request.getEditorial());
             libro.setFechaPublicacion(request.getFechaPublicacion());
             libro.setIsbn(request.getIsbn());
             libro.setAutor(request.getAutor());
             libro.setFechaUltimaModificacion();
             libro.setTitulo(request.getTitulo());
-            return libroRepository.save(libro);
-        })
-        .orElseThrow(() -> new NotFoundException("libro"));
+            return libroRepository.saveAndFlush(libro);        
+        }
+        throw new NotFoundException("libro");
+    }
+
+    public LibroRepository getRepository() {
+        return libroRepository;
     }
 
 
     public String borrarLibro(Integer id) {
-        Optional<Libro> libro = libroRepository.findById(id);
-        List<AutorLibro> autoresLibro = autorLibroRepository.findByLibro(libro.get());
+        Libro libro = libroRepository.getOne(id);
+        List<AutorLibro> autoresLibro = autorLibroRepository.findByLibro(libro);
 
         if(autoresLibro.isEmpty()){
             libroRepository.deleteById(id);
@@ -134,37 +139,98 @@ public class LibroService {
 
             while ((line = br.readLine()) != null) {
                 String[] elements = line.split(",");
-                String titulo = elements[0];
-                String autoresString = elements[1];
-                String fechaPublicacion = elements[2];
-                String editorial = elements[3];
-                String isbn = elements[4];
 
-                Libro libro = new Libro();
-                libro.setTitulo(titulo);
-                libro.setEditorial(editorial);
-                libro.setAutor(autoresString);
-                libro.setFechaPublicacion(LocalDate.parse(fechaPublicacion));
-                libro.setIsbn(isbn);
+                Integer id =Integer.parseInt(elements[0]);
+                String titulo = elements[1];
+                String autoresString = elements[2];
+                String fechaPublicacion = elements[3];
+                String editorial = elements[4];
+                String isbn = elements[5];
+                LibroRequest libroRequest = new LibroRequest();
+                libroRequest.setTitulo(titulo);
+                libroRequest.setFechaPublicacion(LocalDate.parse(fechaPublicacion));
+                libroRequest.setIsbn(isbn);
+                libroRequest.setEditorial(editorial);
+                libroRequest.setAutor(autoresString);
 
-                /*Autores */
-                String[] autoresArray = autoresString.split("/");
-                Set<Autor> autores = new HashSet<>();
-                for(int i=0;i<autoresArray.length;i++){
-                    Autor autorBuscado=autorRepository.findByNombre(autoresArray[i]);
-                    if(autorBuscado!=null){
-                        autores.add(autorBuscado);
-                    }else{
-                        Autor autor = new Autor();
-                        autor.setNombre(autoresArray[i]);
-                        autor = autorRepository.save(autor); // INSERT
-                        autores.add(autor);
+                Libro libroBuscado = libroRepository.getOne(id);
+
+                System.out.println(libroBuscado);
+
+                if(libroBuscado == null){
+                    System.out.println("CREANDOJ¨¨¨***************0");
+
+                    //Se crea el libro
+                    Libro libro = new Libro();
+                    libro.setTitulo(libroRequest.getTitulo());
+                    libro.setEditorial(libroRequest.getEditorial());
+                    libro.setAutor(libroRequest.getAutor());
+                    libro.setFechaPublicacion(libroRequest.getFechaPublicacion());
+                    libro.setIsbn(libroRequest.getIsbn());
+                    
+                    /*Autores */
+                    String[] autoresArray = autoresString.split("/");
+                    Set<Autor> autores = new HashSet<>();
+                    for(int i=0;i<autoresArray.length;i++){
+                        Autor autorBuscado=autorRepository.findByNombre(autoresArray[i]);
+
+                        if(autorBuscado!=null){//existe el autor
+                            autores.add(autorBuscado);
+                        }else{
+                            AutorRequest autorRequest = new AutorRequest();
+                            autorRequest.setNombre(autoresArray[i]);
+                            libroRequest.setAutor(autorRequest);//ya se agrega a la tabla de autor libro
+
+                            Autor autor = new Autor();
+                            autor.setNombre(autoresArray[i]);
+                            autor = autorRepository.saveAndFlush(autor); // INSERT
+                            autores.add(autor);
+                        }
                     }
+                    libro.setAutor(autoresString);
+                    libro.setAutores(autores);
+                    libro.setUsuario(usuario); //se le envia el usuario
+                    libroRepository.saveAndFlush(libro);
+                    libros.add(libro);
+                }else{
+                    
+                    libroBuscado.setTitulo(libroRequest.getTitulo());
+                    libroBuscado.setEditorial(libroRequest.getEditorial());
+                    libroBuscado.setAutor(libroRequest.getAutor());
+                    libroBuscado.setFechaPublicacion(libroRequest.getFechaPublicacion());
+                    libroBuscado.setIsbn(libroRequest.getIsbn());
+                    libroBuscado.setFechaUltimaModificacion();
+    
+                    /*Autores */
+                    String[] autoresArray = autoresString.split("/");
+                    Set<Autor> autores = new HashSet<>();
+                    for(int i=0;i<autoresArray.length;i++){
+                        Autor autorBuscado=autorRepository.findByNombre(autoresArray[i]);
+                        if(autorBuscado!=null){
+                            autores.add(autorBuscado);
+                        }else{
+                            AutorRequest autorRequest = new AutorRequest();
+                            autorRequest.setNombre(autoresArray[i]);
+                            //libroRequest.setAutor(autorRequest);
+
+                            Autor autor = new Autor();
+                            autor.setNombre(autorRequest.getNombre());
+                            autor = autorRepository.saveAndFlush(autor); // INSERT
+                            autores.add(autor);
+                        }
+                    }
+                    libroBuscado.setAutor(autoresString);
+                    libroBuscado.setAutores(autores);
+                    libroBuscado.setUsuario(usuario); //se le envia el usuario
+                    System.out.println(libroBuscado+"LIBRO ACTUALIZADO");
+
+                    libroRepository.saveAndFlush(libroBuscado);
+                    System.out.println("DESPUES DEL FLUSH");
+
+                    libros.add(libroBuscado);
+
+
                 }
-                libro.setAutores(autores);
-                libro.setUsuario(usuario); //se le envia el usuario
-                libroRepository.save(libro);
-                libros.add(libro);
             }
             return libros;
         //libroRepository.saveAll(libros);
@@ -174,16 +240,9 @@ public class LibroService {
     }
 
     public Libro savePDF(MultipartFile file,Usuario usuario){
-        /*System.out.println(folderPath);  
-        if (folderPath == null) {
-            
-            throw new RuntimeException("Ruta para guardar los PDF no especificada en configuracion");
-        }*/
         try{
             String folderPathFile = "C:/xampp/htdocs/sicei/Buscador/files";
-
             //Primero lo guardo
-
             String fileName = file.getOriginalFilename();
             String uuid = UUID.randomUUID().toString();
 
@@ -212,7 +271,7 @@ public class LibroService {
             }
             libro.setURL(filePath);
             libro.setUsuario(usuario); 
-            libroRepository.save(libro);
+            libroRepository.saveAndFlush(libro);
             //Retrieving the info of a PDF document
             System.out.println("Author of the PDF document is :"+ pdd.getAuthor());  
             doc.close();  

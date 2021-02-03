@@ -81,9 +81,6 @@ public class AutorLibro {
     public void setLibro(Libro libro) {
         this.libro = libro;
     }
-    public String  getFechaUltimaModificacion() {
-        return this.last_modified;
-    }
 
     public void setFechaUltimaModificacion() {
         Date dt = new Date();

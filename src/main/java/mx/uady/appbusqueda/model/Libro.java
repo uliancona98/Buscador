@@ -119,9 +119,6 @@ public class Libro {
         this.last_modified = currentTime;    
     }
 
-    public String getFechaUltimaModificacion() {
-        return this.last_modified;
-    }
     public String getAutor() {
         return this.autor;
     }
