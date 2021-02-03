@@ -74,7 +74,7 @@ public class AutorLibroRest {
         autorLibroService.borrarAutorLibro(idLibro, idAutor);
         return ResponseEntity
             .ok()
-            .body("Autor libro Borrado");
+            .body(Collections.singletonMap("message", "Relación entre autor libro Borrado exitosamente"));
     }
 
 

@@ -155,11 +155,7 @@ public class LibroService {
 
                 Libro libroBuscado = libroRepository.getOne(id);
 
-                System.out.println(libroBuscado);
-
                 if(libroBuscado == null){
-                    System.out.println("CREANDOJ¨¨¨***************0");
-
                     //Se crea el libro
                     Libro libro = new Libro();
                     libro.setTitulo(libroRequest.getTitulo());
@@ -222,10 +218,7 @@ public class LibroService {
                     libroBuscado.setAutor(autoresString);
                     libroBuscado.setAutores(autores);
                     libroBuscado.setUsuario(usuario); //se le envia el usuario
-                    System.out.println(libroBuscado+"LIBRO ACTUALIZADO");
-
                     libroRepository.saveAndFlush(libroBuscado);
-                    System.out.println("DESPUES DEL FLUSH");
 
                     libros.add(libroBuscado);
 

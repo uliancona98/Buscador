@@ -146,7 +146,6 @@ public class LibroRest {
       @RequestParam(defaultValue = "id,desc") String[] sort) {
         try {
           List<Order> orders = new ArrayList<Order>();
-          System.out.println("ja");
           if (sort[0].contains(",")) {
             // will sort more than 2 fields
             // sortOrder="field, direction"
