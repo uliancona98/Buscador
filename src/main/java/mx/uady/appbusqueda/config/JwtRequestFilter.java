@@ -10,16 +10,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.filter.OncePerRequestFilter;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import org.apache.commons.codec.binary.Base64;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import mx.uady.appbusqueda.model.Usuario;
 import mx.uady.appbusqueda.model.TokenBlacklist;
@@ -28,9 +22,6 @@ import mx.uady.appbusqueda.repository.TokenRepository;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
-
-	//@Autowired
-	//private JwtUserDetailsService jwtUserDetailsService;
 
     @Autowired 
     private UsuarioRepository usuarioRepository;
@@ -56,7 +47,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		String username = null;
 		String jwtToken = null;
 		DecodedToken token = null;
-		//String signature = null;
 		// JWT Token is in the form "Bearer token". Remove Bearer word and get
 		// only the Token
 		if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
@@ -66,21 +56,18 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 				token = DecodedToken.getDecoded(jwtToken);
                 username = token.getSub();
 			} catch (IllegalArgumentException e) {
-				System.out.println("Unable to get JWT Token");
+				logger.error("Unable to get JWT Token");
 			} catch (Exception e) {
-                e.printStackTrace();
-				System.out.println("JWT Token has expired");
+				logger.error(e.getMessage());
 			}
 
 			TokenBlacklist existingToken = tokenRepository.findByToken(requestTokenHeader);
-			logger.warn(existingToken);
+			
 			if (existingToken != null) {
 				logger.warn("JWT token no válido");
 				username = null;
 			}
 		} else {
-			System.out.println(requestTokenHeader);
-
 			logger.warn("JWT Token does not begin with Bearer String");
 		}
 
@@ -106,7 +93,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 				}
 			}
 			catch(Exception e){			
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 		chain.doFilter(request, response);

@@ -7,9 +7,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @Entity
 @Table(name = "tokens")
 public class TokenBlacklist {
@@ -30,9 +27,5 @@ public class TokenBlacklist {
 
     public String getToken() {
         return this.token;
-    }
-
-    public void setToken() {
-        this.token = token;
     }
 }

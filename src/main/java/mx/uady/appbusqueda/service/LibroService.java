@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.io.InputStreamReader;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import org.apache.pdfbox.pdmodel.PDDocument;   
@@ -43,12 +44,12 @@ public class LibroService {
     private AutorRepository autorRepository;
     @Autowired
     private AutorLibroRepository autorLibroRepository;
+  
+    public static final String TYPECSV = "text/csv";
+    public static final String TYPEPDF = "application/pdf";
 
     @Value("${solr.collection.text.pdf.savePath:null}") 
     private static String folderPath;
-
-    public static String TYPECSV = "text/csv";
-    public static String TYPEPDF = "application/pdf";
 
     public List<Libro> obtenerLibros() {
 
@@ -125,7 +126,7 @@ public class LibroService {
             BufferedReader br;
             String line;
             InputStream is = file.getInputStream();
-            List<Libro> libros = new ArrayList<Libro>();
+            List<Libro> libros = new ArrayList<>();
             br = new BufferedReader(new InputStreamReader(is));
 
             while ((line = br.readLine()) != null) {
@@ -163,7 +164,6 @@ public class LibroService {
                 libros.add(libro);
             }
             return libros;
-        //libroRepository.saveAll(libros);
       } catch (IOException e) {
         throw new RuntimeException("Error al guardar datos del CSV: " + e.getMessage());
       }

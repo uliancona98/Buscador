@@ -1,6 +1,5 @@
 package mx.uady.appbusqueda.model.request;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.validation.constraints.NotEmpty;
@@ -22,7 +21,7 @@ public class UsuarioRequest{
     private String secret;
 
     public UsuarioRequest(){
-        
+        //empty
     }
 
     public void setPassword(String password) {

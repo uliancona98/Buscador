@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import org.apache.commons.codec.binary.Base64;
 import java.nio.charset.StandardCharsets;
 
-
 public class DecodedToken {
 
   private String sub;
@@ -14,6 +13,7 @@ public class DecodedToken {
   private String expiracion;
 
   public static DecodedToken getDecoded(String encodedToken) {
+
     String[] pieces = encodedToken.split("\\.");
     String b64payload = pieces[1];
     String jsonString = new String(Base64.decodeBase64(b64payload), StandardCharsets.UTF_8);

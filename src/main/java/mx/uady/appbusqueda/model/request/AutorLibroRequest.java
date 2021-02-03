@@ -1,11 +1,7 @@
   
 package mx.uady.appbusqueda.model.request;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 
 public class AutorLibroRequest {
     
@@ -16,7 +12,7 @@ public class AutorLibroRequest {
     private Integer idLibro;
 
     public AutorLibroRequest() {
-
+        //empty
     }
 
     public Integer getIdAutor() {
