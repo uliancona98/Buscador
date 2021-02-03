@@ -10,14 +10,20 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.SuggesterResponse;
+
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.client.solrj.impl.XMLResponseParser;
+import org.apache.solr.client.solrj.response.SpellCheckResponse;
+import org.apache.solr.client.solrj.response.SpellCheckResponse.Suggestion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import mx.uady.appbusqueda.model.BookText;
 import mx.uady.appbusqueda.model.Libro;
+import mx.uady.appbusqueda.model.SuggestResponse;
 
 @Service
 public class SolrService {
@@ -90,4 +96,92 @@ public class SolrService {
 
         return highlightedBooks;
     }
+
+
+
+    private List<BookText> getCorrections(Map<String, Map<String, List<String>>> booksText) {
+        List<BookText> highlightedBooks = new ArrayList<>();
+
+        booksText.forEach((bookId, v) -> {
+            List<String> text = v.get(highlightedField);
+            if(text != null) {
+                highlightedBooks.add(new BookText(bookId, text));
+            }
+        });
+
+        return highlightedBooks;
+    }
+
+
+    private List<SuggestResponse> getCorrections2(List<Suggestion> suggestions) {
+        List<SuggestResponse> suggestionsResponse = new ArrayList<>();
+        for (Suggestion suggestion : suggestions) {
+            String stringAlternative = "";
+            for(int i=0;i<suggestion.getAlternatives().size());
+            for(String alternaviteN :suggestions.getAlternatives()){
+                stringAlternative = stringAlternative+alternaviteN +" ";
+            }
+            suggestionsResponse.add(new SuggestResponse(suggestion.getToken(),stringAlternative));
+
+        }
+        return suggestionsResponse;
+    }
+
+    public List<String> getSuggestionsTextCollection(String query) throws SolrServerException, IOException {
+        List<String> suggestions;
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setRequestHandler("/suggest");
+        solrQuery.setQuery(query);
+        QueryResponse response = client.query(booksTextCollection, solrQuery);
+        SuggesterResponse suggesterResponse = response.getSuggesterResponse();
+        suggestions = suggesterResponse.getSuggestedTerms().get("mySuggester");
+        System.out.println(suggestions);
+        return suggestions;
+    }
+
+    public List<String> getSuggestionsBooksCollection(String query) throws SolrServerException, IOException {
+        List<String> suggestions;
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setRequestHandler("/suggest");
+        solrQuery.setQuery(query);
+        QueryResponse response = client.query(booksCollection, solrQuery);
+        SuggesterResponse suggesterResponse = response.getSuggesterResponse();
+        suggestions = suggesterResponse.getSuggestedTerms().get("mySuggester");
+        System.out.println(suggestions);
+        return suggestions;
+    }
+
+    public List<String,String> getCorrectionsTextCollection(String query) throws SolrServerException, IOException {
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setRequestHandler("/spell");
+        solrQuery.setQuery(query);
+        //List<Suggestion> correctionsList;
+        QueryResponse response = client.query(booksTextCollection, solrQuery);
+        SpellCheckResponse spellCheckResponse = response.getSpellCheckResponse();
+        List<String,String> array = new ArrayList();
+        for (Suggestion suggestion : spellCheckResponse) {
+
+            System.out.println("original token: " + suggestion.getToken() + " - alternatives: " + suggestion.getAlternatives());
+            String stringConcatenado= "";
+            for(String alternatives : suggestion.getAlternatives()){
+                stringConcatenado = stringConcatenado + alternatives + " ";
+            }
+            array.add(suggestion.getToken(), stringConcatenado);
+        }
+
+        return array;
+    }
+
+    /*public List<SuggestResponse> getCorrectionsBooksCollection(String query) throws SolrServerException, IOException {
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setRequestHandler("/spell");
+        solrQuery.setQuery(query);
+        List<Suggestion> correctionsList;
+        QueryResponse response = client.query(booksCollection, solrQuery);
+        SpellCheckResponse spellCheckResponse = response.getSpellCheckResponse();
+        correctionsList = spellCheckResponse.getSuggestions();
+        return getCorrections(correctionsList);
+    }*/
+
+
 }

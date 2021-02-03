@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -74,7 +74,7 @@ public class AutorLibroService {
         }
     }
 
-    public AutorLibro editarAutorLibro(Integer idLibro, Integer idAutor, AutorLibroRequest request) {
+ /*   public AutorLibro editarAutorLibro(Integer idLibro, Integer idAutor, AutorLibroRequest request) {
 
         autorRepository.findById(idAutor)
             .orElseThrow(() -> new NotFoundException("autor"));
@@ -92,7 +92,7 @@ public class AutorLibroService {
         }
         throw new NotFoundException("autor y libro solicitada");
     }
-
+*/
     public void borrarAutorLibro(Integer idLibro, Integer idAutor) {
 
         libroRepository.findById(idLibro)

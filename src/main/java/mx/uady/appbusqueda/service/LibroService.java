@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.time.LocalDate;
 import java.io.File;
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,6 @@ import java.util.Set;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.HashSet;
-
 import mx.uady.appbusqueda.model.request.AutorRequest;
 import mx.uady.appbusqueda.model.request.LibroRequest;
 import mx.uady.appbusqueda.model.Autor;
@@ -58,6 +59,8 @@ public class LibroService {
     }
 
     public Libro crearLibro(LibroRequest request, Usuario usuario) {
+
+
         Libro libro = new Libro();
         libro.setEditorial(request.getEditorial());
         libro.setFechaPublicacion(request.getFechaPublicacion());
@@ -81,7 +84,7 @@ public class LibroService {
                 autor.setNombre(autorRequest.getNombre());
                 autor = autorRepository.save(autor); // INSERT
                 autores.add(autor);
-
+                autor = autorRepository.save(autor); // INSERT
             }
         }
         libro.setAutores(autores);
@@ -101,6 +104,7 @@ public class LibroService {
             libro.setFechaPublicacion(request.getFechaPublicacion());
             libro.setIsbn(request.getIsbn());
             libro.setAutor(request.getAutor());
+            libro.setFechaUltimaModificacion();
             libro.setTitulo(request.getTitulo());
             return libroRepository.save(libro);
         })

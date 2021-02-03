@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.text.SimpleDateFormat;
 import javax.persistence.OneToMany;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -31,10 +32,21 @@ public class Autor {
     @Column
     private String nombre;
 
+    @Column
+    @JsonIgnore
+    private String last_modified;
+
     @ManyToMany(mappedBy = "autores")
     @JsonBackReference
     private Set<Libro> libros;
     public Autor() {
+        Date dt = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String currentTime = sdf.format(dt);
+        dt = new Date();
+        sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        currentTime = sdf.format(dt);
+        this.last_modified = currentTime;
     }
 
     public Integer getId() {
@@ -45,6 +57,19 @@ public class Autor {
         this.id = id;
     }
 
+    public String  getFechaUltimaModificacion() {
+        return this.last_modified;
+    }
+
+    public void setFechaUltimaModificacion() {
+        Date dt = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String currentTime = sdf.format(dt);
+        dt = new Date();
+        sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        currentTime = sdf.format(dt);
+        this.last_modified = currentTime;
+    }
 
     public String getNombre() {
         return this.nombre;

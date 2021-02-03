@@ -9,6 +9,8 @@ import javax.persistence.Table;
 import java.time.LocalDate;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -46,6 +48,10 @@ public class Libro {
     @Column
     private String isbn;
 
+    @Column
+    @JsonIgnore
+    private String last_modified;
+
     @OneToOne
     @JoinColumn(name = "idUsuario")
     private Usuario idUsuario;
@@ -63,6 +69,13 @@ public class Libro {
     private Set<Autor> autores;
 
     public Libro() {
+        Date dt = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String currentTime = sdf.format(dt);
+        dt = new Date();
+        sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        currentTime = sdf.format(dt);
+        this.last_modified = currentTime;
     }
 
     public Integer getId() {
@@ -96,6 +109,19 @@ public class Libro {
         this.autor = autor;
     }
 
+    public void setFechaUltimaModificacion() {
+        Date dt = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String currentTime = sdf.format(dt);
+        dt = new Date();
+        sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        currentTime = sdf.format(dt);
+        this.last_modified = currentTime;    
+    }
+
+    public String getFechaUltimaModificacion() {
+        return this.last_modified;
+    }
     public String getAutor() {
         return this.autor;
     }

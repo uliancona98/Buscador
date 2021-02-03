@@ -55,14 +55,14 @@ public class AutorLibroRest {
     }
 
 
-    @PutMapping("/autoresLibros/{idLibro}/{idAutor}")
+    /*@PutMapping("/autoresLibros/{idLibro}/{idAutor}")
     public ResponseEntity<AutorLibro> putAutorLibro(@PathVariable Integer idLibro, @PathVariable Integer idAutor, @RequestBody AutorLibroRequest request) {
 
         AutorLibro autorLibro = autorLibroService.editarAutorLibro(idLibro, idAutor, request);
         return ResponseEntity
             .ok()
             .body(autorLibro);
-    }
+    }*/
 
     @GetMapping("/autoresLibros/{idLibro}/{idAutor}")
     public ResponseEntity<AutorLibro> getAutorLibro(@PathVariable Integer idLibro, @PathVariable Integer idAutor){

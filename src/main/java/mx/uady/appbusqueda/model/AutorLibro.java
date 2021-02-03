@@ -16,9 +16,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
 import javax.persistence.GeneratedValue;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import javax.persistence.GenerationType;
 
-
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -40,9 +43,19 @@ public class AutorLibro {
     @ManyToOne(optional=false)
     @JoinColumn(name="id_autor",referencedColumnName="id", insertable=false, updatable=false)
     Autor autor;
-
+    
+    @Column
+    @JsonIgnore
+    private String last_modified;
 
     public AutorLibro() {
+        Date dt = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String currentTime = sdf.format(dt);
+        dt = new Date();
+        sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        currentTime = sdf.format(dt);
+        this.last_modified = currentTime;
     }
 
     public Integer getId() {
@@ -68,7 +81,19 @@ public class AutorLibro {
     public void setLibro(Libro libro) {
         this.libro = libro;
     }
+    public String  getFechaUltimaModificacion() {
+        return this.last_modified;
+    }
 
+    public void setFechaUltimaModificacion() {
+        Date dt = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String currentTime = sdf.format(dt);
+        dt = new Date();
+        sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        currentTime = sdf.format(dt);
+        this.last_modified = currentTime;
+    }
     /*@Override
     public String toString() {
         return "{" +
