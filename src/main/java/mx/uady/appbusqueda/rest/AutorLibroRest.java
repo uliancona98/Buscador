@@ -54,30 +54,17 @@ public class AutorLibroRest {
 
     }
 
-
-    /*@PutMapping("/autoresLibros/{idLibro}/{idAutor}")
-    public ResponseEntity<AutorLibro> putAutorLibro(@PathVariable Integer idLibro, @PathVariable Integer idAutor, @RequestBody AutorLibroRequest request) {
-
-        AutorLibro autorLibro = autorLibroService.editarAutorLibro(idLibro, idAutor, request);
-        return ResponseEntity
-            .ok()
-            .body(autorLibro);
-    }*/
-
     @GetMapping("/autoresLibros/{idLibro}/{idAutor}")
     public ResponseEntity<AutorLibro> getAutorLibro(@PathVariable Integer idLibro, @PathVariable Integer idAutor){
         return ResponseEntity.ok().body(autorLibroService.getAutorLibro(idAutor, idLibro));
     }
 
     @DeleteMapping("/autoresLibros/{idLibro}/{idAutor}")
-    public ResponseEntity<String> deleteAutorLibro(@PathVariable Integer idLibro, @PathVariable Integer idAutor){
+    public ResponseEntity<?> deleteAutorLibro(@PathVariable Integer idLibro, @PathVariable Integer idAutor){
         autorLibroService.borrarAutorLibro(idLibro, idAutor);
         return ResponseEntity
             .ok()
             .body(Collections.singletonMap("message", "Relación entre autor libro Borrado exitosamente"));
     }
-
-
-
 
 }
